@@ -1,0 +1,7 @@
+dependencies:
+  override:
+    - pip install tox
+
+test:
+  override:
+    - make test-all
