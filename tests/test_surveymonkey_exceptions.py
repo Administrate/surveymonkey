@@ -5,7 +5,6 @@ import pytest
 from httmock import HTTMock
 from expects import expect, contain, equal
 
-from surveymonkey.surveymonkey import SurveyMonkeyConnection
 from surveymonkey.manager import BaseManager
 
 from surveymonkey.exceptions import (
@@ -16,6 +15,7 @@ from surveymonkey.exceptions import (
     SurveyMonkeyUserDeleted
 )
 
+from .utils import create_fake_connection
 from .mocks.errors import ErrorResponseMocks
 
 
@@ -81,12 +81,11 @@ class TestSurveymonkeyExceptions(object):
 
     def setup_class(self):
         self.mocks = ErrorResponseMocks()
-        self.connection = SurveyMonkeyConnection("ACCESS_TOKEN", "API_KEY")
+        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
         self.manager = BaseManager(self.connection)
 
-    @pytest.mark.parametrize("mock,surveymonkey_exception,error_message", ExceptionFixtures().possible_exceptions)
-    def test_correct_exception_raised_for_status_code_and_surveymonkey_error_code(
-        self, mock, surveymonkey_exception, error_message):
+    @pytest.mark.parametrize("mock,surveymonkey_exception,error_message", ExceptionFixtures().possible_exceptions)  # noqa:E501
+    def test_correct_exception_raised_for_status_code_and_surveymonkey_error_code(self, mock, surveymonkey_exception, error_message):  # noqa:E501
         with HTTMock(mock):
             with pytest.raises(surveymonkey_exception) as e:
                 self.manager.get("mocked://")
@@ -99,4 +98,4 @@ class TestSurveymonkeyExceptions(object):
                 self.manager.get("mocked://")
 
             expect(e.value.status_code).to(equal(404))
-            expect(e.value.error_code).to(equal("1020"))  # Error codes from SurveyMonkey are strings not ints
+            expect(e.value.error_code).to(equal("1020"))  # Errorcode from SurveyMonkey are strings

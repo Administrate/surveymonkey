@@ -4,17 +4,17 @@
 from httmock import HTTMock
 from expects import expect, have_keys, equal
 
-from surveymonkey.surveymonkey import SurveyMonkeyConnection
 from surveymonkey.users import Users
 
-from .mocks.users import UsersResponseMocks
+from ..utils import create_fake_connection
+from ..mocks.users import UsersResponseMocks
 
 
 class TestSurveymonkeyUser(object):
 
     def setup_class(self):
+        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
         self.mocks = UsersResponseMocks()
-        self.connection = SurveyMonkeyConnection("ACCESS_TOKEN", "API_KEY")
         self.users = Users(self.connection)
 
     def test_successful_request_to_user_me_endpoint(self):
