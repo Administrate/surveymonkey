@@ -3,30 +3,20 @@
 
 import six
 
-from faker import Factory
 from httmock import HTTMock
 from expects import expect, have_key, have_keys, equal, start_with, end_with, be_a
 
-from surveymonkey.surveymonkey import SurveyMonkeyConnection
 from surveymonkey.manager import BaseManager
 from surveymonkey.constants import URL_USER_ME
 
+from .utils import create_fake_connection
 from .mocks.users import UsersResponseMocks
 
 
 class TestBaseManager(object):
 
     def setup_class(self):
-        self.fake = Factory.create()
-        self.ACCESS_TOKEN = self.fake.password(
-            length=50, special_chars=True, digits=True,
-            upper_case=True, lower_case=True
-        )
-        self.API_KEY = self.fake.password(
-            length=12, digits=True,
-            upper_case=True, lower_case=True
-        )
-        self.connection = SurveyMonkeyConnection(self.ACCESS_TOKEN, self.API_KEY)
+        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
         self.manager = BaseManager(self.connection)
         self.session = self.manager.create_session()
 
@@ -50,4 +40,4 @@ class TestBaseManager(object):
             data = self.manager.parse_response(response)
 
             expect(data).to(have_keys('id', 'username', 'email'))
-            expect(data["id"]).to(be_a(six.text_type))  # IDs from SurveyMonkey are strings not ints
+            expect(data["id"]).to(be_a(six.text_type))  # IDs from SurveyMonkey are strings
