@@ -20,11 +20,29 @@ class BaseManager(object):
 
         return session
 
-    def build_url(self, url):
-        return "{url}?api_key={api_key}".format(
+    def build_url(self, url, *args, **kwargs):
+        page = kwargs.get("page", None)
+        per_page = kwargs.get("per_page", None)
+
+        endpoint = "{url}{operator}api_key={api_key}".format(
             url=url,
+            operator="?" if "?" not in url else "&",
             api_key=self.connection.API_KEY
         )
+
+        if page:
+            endpoint = "{existing_url}&page={page}".format(
+                existing_url=endpoint,
+                page=page
+            )
+
+        if per_page:
+            endpoint = "{existing_url}&per_page={per_page}".format(
+                existing_url=endpoint,
+                per_page=per_page
+            )
+
+        return endpoint
 
     def set_quotas(self, response):
         self.quotas = {}
@@ -60,13 +78,13 @@ class BaseManager(object):
     def parse_response(self, response):
         return response.json()
 
-    def make_request(self, base_url, method="GET"):
+    def make_request(self, base_url, method="GET", *args, **kwargs):
         self.create_session()
-        url = self.build_url(base_url)
+        url = self.build_url(base_url, *args, **kwargs)
         return requests.request(method, url)
 
-    def get(self, base_url):
-        response = self.make_request(base_url)
+    def get(self, base_url, *args, **kwargs):
+        response = self.make_request(base_url, *args, **kwargs)
         self.set_quotas(response)
         response_raises(response)
         return self.parse_response(response)
