@@ -12,7 +12,7 @@ def create_fake_connection():
         upper_case=True, lower_case=True
     )
     API_KEY = fake.password(
-        length=12, digits=True,
+        length=12, digits=True, special_chars=False,
         upper_case=True, lower_case=True
     )
     connection = SurveyMonkeyConnection(ACCESS_TOKEN, API_KEY)

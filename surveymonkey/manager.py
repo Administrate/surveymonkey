@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import requests
+import json
 
 from .exceptions import response_raises
 
@@ -79,12 +80,20 @@ class BaseManager(object):
         return response.json()
 
     def make_request(self, base_url, method="GET", *args, **kwargs):
-        self.create_session()
+        session = self.create_session()
         url = self.build_url(base_url, *args, **kwargs)
-        return requests.request(method, url)
+        data = json.dumps(kwargs.get("data")) if kwargs.get("data", False) else None
+
+        return session.request(method, url, data=data)
 
     def get(self, base_url, *args, **kwargs):
         response = self.make_request(base_url, *args, **kwargs)
+        self.set_quotas(response)
+        response_raises(response)
+        return self.parse_response(response)
+
+    def post(self, base_url, data, *args, **kwargs):
+        response = self.make_request(base_url=base_url, method='POST', data=data, *args, **kwargs)
         self.set_quotas(response)
         response_raises(response)
         return self.parse_response(response)

@@ -69,7 +69,13 @@ class SurveyListMock(object):
         if remaining > 0:
             remaining = remaining if remaining < per_page else per_page
             for x in range(0, remaining):
-                id = fake.password(length=8, digits=True)
+                id = fake.password(
+                    length=8,
+                    digits=True,
+                    upper_case=True,
+                    special_chars=False,
+                    lower_case=False
+                )
                 data = {
                     "href": "{base_url}/{id}".format(base_url=self.base_url, id=id),
                     "id": id,
