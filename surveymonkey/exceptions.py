@@ -45,11 +45,6 @@ class SurveyMonkeyUserDeleted(SurveyMonkeyException):
     pass
 
 
-class SurveyMonkeyPageOutOfRange(Exception):
-    def __init__(self):
-        super(SurveyMonkeyPageOutOfRange, self).__init__("Requested page is out of range")
-
-
 def response_raises(response):
     if response.status_code == 200:
         return

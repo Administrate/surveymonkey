@@ -1,12 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import pytest
 from httmock import HTTMock
-from expects import expect, end_with, have_keys, have_length, contain
+from expects import expect, end_with, have_keys, have_length
 
 from surveymonkey.surveys import Surveys
-from surveymonkey.exceptions import SurveyMonkeyPageOutOfRange
 
 from ..utils import create_fake_connection
 from ..mocks.surveys import SurveyListMock
