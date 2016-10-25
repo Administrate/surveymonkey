@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 
 from .manager import BaseManager
 from .constants import URL_SURVEYS_LIST
