@@ -10,18 +10,17 @@ class TestSurveyMocksCount(object):  # Quis custodiet ipsos custodes?
 
     def test_survey_count_is_equal_to_total_surveys_when_total_is_less_than_per_page(self):
         mock = SurveyListMock(total=20)
-        remaining = mock.calculate_number_of_surveys_remaining(per_page=50, current_page=1)
-
+        remaining = mock.calculate_number_remaining(per_page=50, current_page=1)
         expect(remaining).to(equal(20))
 
     def test_survey_count_is_zero_when_exceed_the_number_of_possible_pages(self):
         mock = SurveyListMock(total=125)
-        remaining = mock.calculate_number_of_surveys_remaining(per_page=50, current_page=4)
+        remaining = mock.calculate_number_remaining(per_page=50, current_page=4)
         expect(remaining).to(equal(0))
 
     def test_survey_count_is_correctly_reported_when_there_is_more_than_one_page(self):
         mock = SurveyListMock(total=125)
-        remaining = mock.calculate_number_of_surveys_remaining(per_page=50, current_page=2)
+        remaining = mock.calculate_number_remaining(per_page=50, current_page=2)
         expect(remaining).to(equal(75))
 
 

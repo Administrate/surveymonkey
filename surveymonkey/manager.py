@@ -86,6 +86,18 @@ class BaseManager(object):
 
         return session.request(method, url, data=data)
 
+    def get_list(self, next_url, max_pages=100):
+        guard = 0
+        response_list = []
+
+        while guard < max_pages and next_url:
+            guard += 1
+            response = self.get(base_url=next_url)
+            response_list = response_list + response["data"]
+            next_url = response["links"]["next"] if "next" in response["links"] else False
+
+        return response_list
+
     def get(self, base_url, *args, **kwargs):
         response = self.make_request(base_url, *args, **kwargs)
         self.set_quotas(response)
