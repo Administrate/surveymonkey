@@ -6,3 +6,4 @@ URL_USER_ME = "%s/users/me" % BASE_URL
 URL_SURVEYS_LIST = "%s/surveys" % BASE_URL
 URL_COLLECTOR_CREATE = "%s/surveys/{survey_id}/collectors" % BASE_URL
 URL_COLLECTOR_SINGLE = "%s/collectors" % BASE_URL
+URL_WEBHOOKS = "%s/webhooks" % BASE_URL
