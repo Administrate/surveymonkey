@@ -4,11 +4,13 @@ import random
 
 from faker import Faker
 from httmock import all_requests, response
-from .utils import create_quota_headers
+from ..utils import weighted_choice
+from .utils import create_quota_headers, BaseListMock
 
-from .utils import BaseListMock
 from surveymonkey.collectors.configs import is_email
-from surveymonkey.constants import URL_COLLECTOR_CREATE, URL_COLLECTOR_SINGLE
+from surveymonkey.constants import (API_URL, BASE_URL, URL_COLLECTOR_CREATE, URL_COLLECTOR_SINGLE,
+                                    URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_RESPONSES_BULK)
+from surveymonkey.responses.constants import COMPLETED, PARTIAL, OVERQUOTA, DISQUALIFIED
 
 
 class CollectorMock(object):
@@ -55,34 +57,25 @@ class CollectorMock(object):
 class CollectorsListMock(BaseListMock):
 
     def __init__(self, total, survey_id, base_url=URL_COLLECTOR_CREATE):
+        self.fake = Faker()
         url = base_url.format(
             survey_id=survey_id
         )
         super(CollectorsListMock, self).__init__(total=total, base_url=url)
 
-    def create_collectors(self, per_page, current_page, pages):
-        collectors = []
-        fake = Faker()
-        remaining = self.calculate_number_remaining(per_page, current_page)
-
-        if remaining > 0:
-            remaining = remaining if remaining < per_page else per_page
-            for x in range(0, remaining):
-                id = fake.password(
-                    length=8,
-                    digits=True,
-                    upper_case=True,
-                    special_chars=False,
-                    lower_case=False
-                )
-                data = {
-                    "href": "{base_url}/{id}".format(base_url=URL_COLLECTOR_SINGLE, id=id),
-                    "id": id,
-                    "name": fake.catch_phrase()
-                }
-                collectors.append(data)
-
-        return collectors
+    def create_item(self):
+        id = self.fake.password(
+            length=8,
+            digits=True,
+            upper_case=True,
+            special_chars=False,
+            lower_case=False
+        )
+        return {
+            "href": "{base_url}/{id}".format(base_url=URL_COLLECTOR_SINGLE, id=id),
+            "id": id,
+            "name": self.fake.catch_phrase()
+        }
 
     @all_requests
     def list(self, url, request):
@@ -90,7 +83,105 @@ class CollectorsListMock(BaseListMock):
         per_page, current_page, pages = self.parse_url(url)
 
         links = self.get_links(per_page, current_page, pages)
-        data = self.create_collectors(per_page, current_page, pages)
+        data = self.create_items(per_page, current_page, pages)
+
+        content = {
+            "per_page": per_page,
+            "total": self.total,
+            "page": current_page,
+            "data": data,
+            "links": links
+        }
+
+        return response(200, content, headers)
+
+
+class CollectorResponsesBulkListMock(BaseListMock):
+
+    def __init__(self, total, collector_ids, status=None, config={}):
+        self.collector_ids = collector_ids
+        self.status = status
+        self.config = config
+        self.is_multi = isinstance(collector_ids, list)
+        self.survey_id = random.randint(1234, 567890)
+        self.fake = Faker()
+
+        if self.is_multi:
+            base_url = URL_SURVEY_RESPONSES_BULK.format(
+                survey_id=self.survey_id,
+            ) + "?collector_ids=%s" % ",".join(self.collector_ids)
+        else:
+            base_url = URL_COLLECTOR_RESPONSES_BULK.format(
+                collector_id=self.collector_ids
+            )
+
+        super(CollectorResponsesBulkListMock, self).__init__(total=total, base_url=base_url)
+
+    def get_status(self):
+        if self.status:
+            return self.status
+
+        return weighted_choice(
+            [(COMPLETED, 20), (PARTIAL, 70), (OVERQUOTA, 5), (DISQUALIFIED, 5)]
+        )
+
+    def get_valid_collector_id(self):
+        return random.choice(self.collector_ids) if self.is_multi else self.collector_ids
+
+    def create_item(self):
+        response_id = random.randint(123456, 34567890)
+        uid = self.fake.password(
+            length=20,
+            digits=True,
+            upper_case=True,
+            special_chars=False,
+            lower_case=False
+        )
+
+        href = "{api_url}/surveys/{survey_id}/responses/{response_id}".format(
+            api_url=API_URL,
+            survey_id=self.survey_id,
+            response_id=response_id
+        )
+        analyze_url = "{base_url}/analyze/browse/{uid}?respondent_id={response_id}".format(
+            base_url=BASE_URL,
+            uid=uid,
+            response_id=response_id
+        )
+        edit_url = "{base_url}/r/?sm={uid}".format(
+            base_url=BASE_URL,
+            uid=uid
+        )
+
+        return {
+            "total_time": 12,
+            "href": href,
+            "custom_variables": self.config.get("custom_variables", {}),
+            "ip_address": "87.246.78.46",
+            "id": response_id,
+            "logic_path": {},
+            "date_modified": self.fake.iso8601(tzinfo=None),
+            "response_status": self.get_status(),
+            "custom_value": self.config.get("custom_value", ""),
+            "analyze_url": analyze_url,
+            "pages": [],
+            "page_path": [],
+            "recipient_id": "",
+            "collector_id": self.get_valid_collector_id(),
+            "date_created": self.fake.iso8601(tzinfo=None),
+            "survey_id": self.survey_id,
+            "collection_mode": "default",
+            "edit_url": edit_url,
+            "metadata": self.config.get("metadata", {})
+        }
+
+    @all_requests
+    def bulk(self, url, request):
+        headers = create_quota_headers()
+        per_page, current_page, pages = self.parse_url(url)
+
+        links = self.get_links(per_page, current_page, pages)
+        data = self.create_items(per_page, current_page, pages)
 
         content = {
             "per_page": per_page,

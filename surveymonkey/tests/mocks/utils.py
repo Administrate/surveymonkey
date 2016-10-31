@@ -80,3 +80,18 @@ class BaseListMock(object):
         current_page = int(url.args.get("page", 1))
         pages = math.ceil(self.total / per_page)
         return per_page, current_page, pages
+
+    def create_item(self):
+        raise NotImplementedError("Implemented in subclass")
+
+    def create_items(self, per_page, current_page, pages):
+        items = []
+        remaining = self.calculate_number_remaining(per_page, current_page)
+
+        if remaining > 0:
+            remaining = remaining if remaining < per_page else per_page
+            for x in range(0, remaining):
+                item = self.create_item()
+                items.append(item)
+
+        return items

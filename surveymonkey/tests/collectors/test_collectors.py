@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import random
-from httmock import HTTMock
-from expects import expect, have_keys, have_length
 
-from ..utils import create_fake_connection
-from .collector_matchers import be_email, be_weblink, be_new
-from ..mocks.collectors import CollectorMock, CollectorsListMock
+from expects import expect, have_keys, have_length
+from httmock import HTTMock
 
 from surveymonkey.collectors import Collector, EmailConfig, WeblinkConfig
+from surveymonkey.tests.collectors.matchers.collector import be_email, be_weblink, be_new
+from ..mocks.collectors import CollectorMock, CollectorsListMock
+from ..utils import create_fake_connection
 
 
 class TestCreateCollectors(object):
