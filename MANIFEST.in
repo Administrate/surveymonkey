@@ -3,6 +3,8 @@ include CONTRIBUTING.rst
 include LICENSE
 include README.rst
 
+recursive-include surveymonkey/collectors *
+recursive-include surveymonkey/webhooks *
 recursive-include surveymonkey/tests *
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]

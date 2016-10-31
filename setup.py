@@ -16,7 +16,7 @@ test_requirements = [
 
 setup(
     name='surveymonkey',
-    version='0.1.3',
+    version='0.1.4',
     description="Python wrapper for the Survey Monkey v3 API",
     long_description=readme,
     author="Aaron Bassett",
@@ -24,6 +24,8 @@ setup(
     url='https://github.com/Administrate/surveymonkey',
     packages=[
         'surveymonkey',
+        'surveymonkey.collectors',
+        'surveymonkey.webhooks'
     ],
     package_dir={'surveymonkey':
                  'surveymonkey'},
