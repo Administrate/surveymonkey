@@ -24,6 +24,8 @@ setup(
     url='https://github.com/Administrate/surveymonkey',
     packages=[
         'surveymonkey',
+        'surveymonkey.collectors',
+        'surveymonkey.webhooks'
     ],
     package_dir={'surveymonkey':
                  'surveymonkey'},
