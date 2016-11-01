@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import random
+from furl import furl
 
 from faker import Faker
 from httmock import all_requests, response
@@ -107,13 +108,10 @@ class CollectorResponsesBulkListMock(BaseListMock):
         self.fake = Faker()
 
         if self.is_multi:
-            base_url = URL_SURVEY_RESPONSES_BULK.format(
-                survey_id=self.survey_id,
-            ) + "?collector_ids=%s" % ",".join(self.collector_ids)
+            base_url = URL_SURVEY_RESPONSES_BULK.format(survey_id=self.survey_id)
+            base_url = furl(base_url).add({"collector_ids": ",".join(self.collector_ids)}).url
         else:
-            base_url = URL_COLLECTOR_RESPONSES_BULK.format(
-                collector_id=self.collector_ids
-            )
+            base_url = URL_COLLECTOR_RESPONSES_BULK.format(collector_id=self.collector_ids)
 
         super(CollectorResponsesBulkListMock, self).__init__(total=total, base_url=base_url)
 
