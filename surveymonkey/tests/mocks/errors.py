@@ -111,3 +111,30 @@ class ErrorResponseMocks(object):
             name="User Deleted",
             message="The user you are making this request for has been deleted."
         )
+
+    @all_requests
+    def not_within_surveymonkey_error_code_range(self, url, request):
+        return self._create_response(
+            status_code=9001,
+            id="9001",
+            name="Out of SurveyMonkey range error",
+            message="This is an error code that is not within the normal ranges"
+        )
+
+    @all_requests
+    def status_2xx(self, url, request):
+        return self._create_response(
+            status_code=201,
+            id="201",
+            name="Created",
+            message="This will test a 2xx status does not raise an exception"
+        )
+
+    @all_requests
+    def status_3xx(self, url, request):
+        return self._create_response(
+            status_code=303,
+            id="303",
+            name="See Other",
+            message="This will test a 3xx status does not raise an exception"
+        )

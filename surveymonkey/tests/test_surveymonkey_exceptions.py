@@ -99,3 +99,15 @@ class TestSurveymonkeyExceptions(object):
 
             expect(e.value.status_code).to(equal(404))
             expect(e.value.error_code).to(equal("1020"))  # Errorcode from SurveyMonkey are strings
+
+    def test_unknown_status_code_does_not_raise_an_exception(self):
+        with HTTMock(self.mocks.not_within_surveymonkey_error_code_range):
+            self.manager.get("mocked://")
+
+    def test_2xx_does_not_raise_an_exception(self):
+        with HTTMock(self.mocks.status_2xx):
+            self.manager.get("mocked://")
+
+    def test_3xx_does_not_raise_an_exception(self):
+        with HTTMock(self.mocks.status_3xx):
+            self.manager.get("mocked://")

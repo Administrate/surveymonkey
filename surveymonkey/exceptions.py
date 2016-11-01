@@ -71,7 +71,7 @@ def response_raises(response):
 
     code = response.status_code
 
-    if code == 200:
+    if 200 <= code <= 399:
         return
     elif code == 404:
         exception = _not_found(response)
@@ -79,5 +79,8 @@ def response_raises(response):
         exception = _client_error(code)
     elif 500 <= code <= 599:
         exception = _server_error(code)
+    else:
+        exception = None
 
-    raise exception(response)
+    if exception:
+        raise exception(response)  # If we don't find a matching status code don't assume failure
