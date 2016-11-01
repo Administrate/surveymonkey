@@ -13,3 +13,4 @@ pytest==2.9.2
 requests==2.11.1
 httmock==1.2.5
 Faker==0.7.3
+furl==0.5.6

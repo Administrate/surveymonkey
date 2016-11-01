@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import division
 
-from six.moves.urllib.parse import parse_qs
-
 import math
 from datetime import datetime
 from random import randint
 
+from furl import furl
 from delorean import Delorean
 
 
@@ -34,36 +33,36 @@ class BaseListMock(object):
     def get_links(self, per_page, current_page, pages):
         last_page = pages
 
+        def _clean_base_url(url):  # Prevent duplicate qs params
+            return furl(url).remove(['per_page', 'current_page', 'pages']).copy()
+
         links = dict()
-        links["self"] = "{base_url}?page={page}&per_page={per_page}".format(
-            base_url=self.base_url,
-            page=current_page,
-            per_page=per_page
-        )
+        links["self"] = _clean_base_url(self.base_url).add({
+            "per_page": per_page,
+            "page": current_page
+        }).url
 
         if last_page > 1:
             if current_page != last_page:
-                links["last"] = "{base_url}?page={current_page}&per_page={per_page}".format(
-                    base_url=self.base_url,
-                    current_page=current_page,
-                    per_page=per_page
-                )
+                links["last"] = _clean_base_url(self.base_url).add({
+                    "per_page": per_page,
+                    "page": current_page
+                }).url
+
                 if current_page < last_page:
-                    links["next"] = "{base_url}?page={next_page}&per_page={per_page}".format(
-                        base_url=self.base_url,
-                        next_page=current_page + 1,
-                        per_page=per_page
-                    )
+                    links["next"] = _clean_base_url(self.base_url).add({
+                        "per_page": per_page,
+                        "page": current_page + 1
+                    }).url
             if current_page != 1:
-                links["first"] = "{base_url}?page=1&per_page={per_page}".format(
-                    base_url=self.base_url,
-                    per_page=per_page
-                )
-                links["prev"] = "{base_url}?page={prev_page}&per_page={per_page}".format(
-                    base_url=self.base_url,
-                    prev_page=current_page - 1,
-                    per_page=per_page
-                )
+                links["first"] = _clean_base_url(self.base_url).add({
+                    "per_page": per_page,
+                    "page": 1
+                }).url
+                links["prev"] = _clean_base_url(self.base_url).add({
+                    "per_page": per_page,
+                    "page": current_page - 1
+                }).url
 
         return links
 
@@ -76,10 +75,8 @@ class BaseListMock(object):
             return 0 if total_remaining <= 0 else total_remaining
 
     def parse_url(self, url):
-        qs = dict(parse_qs(url.query))
-
-        per_page = int(qs.get("per_page", ['50'])[0])
-        current_page = int(qs.get("page", ['1'])[0])
+        url = furl(url.geturl())
+        per_page = int(url.args.get("per_page", 50))
+        current_page = int(url.args.get("page", 1))
         pages = math.ceil(self.total / per_page)
-
         return per_page, current_page, pages

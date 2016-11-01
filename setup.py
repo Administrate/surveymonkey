@@ -7,7 +7,8 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    # TODO: put package requirements here
+    'furl==0.5.6',
+    'six==1.10.0'
 ]
 
 test_requirements = [
