@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import requests
+from furl import furl
 import json
 
 from .exceptions import response_raises
@@ -25,25 +26,14 @@ class BaseManager(object):
         page = kwargs.get("page", None)
         per_page = kwargs.get("per_page", None)
 
-        endpoint = "{url}{operator}api_key={api_key}".format(
-            url=url,
-            operator="?" if "?" not in url else "&",
-            api_key=self.connection.API_KEY
-        )
-
+        url = furl(url)
+        url.args["api_key"] = self.connection.API_KEY
         if page:
-            endpoint = "{existing_url}&page={page}".format(
-                existing_url=endpoint,
-                page=page
-            )
-
+            url.args["page"] = page
         if per_page:
-            endpoint = "{existing_url}&per_page={per_page}".format(
-                existing_url=endpoint,
-                per_page=per_page
-            )
+            url.args["per_page"] = per_page
 
-        return endpoint
+        return url.url
 
     def set_quotas(self, response):
         self.quotas = {}

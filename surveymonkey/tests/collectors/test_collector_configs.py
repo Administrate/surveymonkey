@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from faker import Factory
 from expects import expect
-from .config_matchers import be_email, be_weblink
+from faker import Factory
 
 from surveymonkey.collectors import EmailConfig, WeblinkConfig
+from surveymonkey.tests.collectors.matchers.config import be_email, be_weblink
 
 
 class TestCollectorsConfiguration(object):
