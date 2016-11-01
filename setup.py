@@ -26,7 +26,8 @@ setup(
     packages=[
         'surveymonkey',
         'surveymonkey.collectors',
-        'surveymonkey.webhooks'
+        'surveymonkey.webhooks',
+        'surveymonkey.messages'
     ],
     package_dir={'surveymonkey':
                  'surveymonkey'},
