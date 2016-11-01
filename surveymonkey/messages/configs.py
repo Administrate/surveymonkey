@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import six
-
-
-class BaseConfig(object):
-    def __init__(self, **kwargs):
-        for key, value in six.iteritems(kwargs):
-            setattr(self, key, value)
+from surveymonkey.surveymonkey import BaseConfig
 
 
 class InviteConfig(BaseConfig):
