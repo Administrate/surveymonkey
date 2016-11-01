@@ -13,7 +13,7 @@ from ..mocks.users import UsersResponseMocks
 class TestSurveymonkeyUser(object):
 
     def setup_class(self):
-        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
+        self.ACCESS_TOKEN, self.connection = create_fake_connection()
         self.mocks = UsersResponseMocks()
         self.users = Users(self.connection)
 

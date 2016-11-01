@@ -12,17 +12,12 @@ def create_fake_connection():
         length=50, special_chars=True, digits=True,
         upper_case=True, lower_case=True
     )
-    API_KEY = fake.password(
-        length=12, digits=True, special_chars=False,
-        upper_case=True, lower_case=True
-    )
-    connection = SurveyMonkeyConnection(ACCESS_TOKEN, API_KEY)
+    connection = SurveyMonkeyConnection(ACCESS_TOKEN)
 
-    return ACCESS_TOKEN, API_KEY, connection
+    return ACCESS_TOKEN, connection
 
 
 def weighted_choice(choices):
-    return random.choice(choices)[0]
     total = sum(w for c, w in choices)
     r = random.uniform(0, total)
     upto = 0

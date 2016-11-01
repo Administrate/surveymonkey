@@ -15,7 +15,7 @@ from ..utils import create_fake_connection
 class TestCreateMessages(object):
 
     def setup_class(self):
-        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
+        self.ACCESS_TOKEN, self.connection = create_fake_connection()
         self.collector_id = random.randint(1234, 567890)
 
     def setup_method(self, method):
