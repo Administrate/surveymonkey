@@ -69,3 +69,27 @@ class MessagesRecipientsMock(object):
         }
 
         return response(200, content, headers)
+
+
+class MessagesSendMock(object):
+
+    def __init__(self):
+        self.fake = Faker()
+
+    @all_requests
+    def send(self, url, request):
+        headers = create_quota_headers()
+
+        content = {
+          "is_scheduled": True,
+          "scheduled_date": self.fake.iso8601(tzinfo=None),
+          "body": "<html>...</html>",
+          "subject": "We want your opinion",
+          "recipients": [
+              str(random.randint(12345, 67890)) for x in range(2, random.randint(5, 20))
+          ],
+          "recipient_status": None,
+          "type": "invite"
+        }
+
+        return response(200, content, headers)

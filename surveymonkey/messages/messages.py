@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from ..manager import BaseManager
-from ..constants import URL_MESSAGE_CREATE, URL_MESSAGE_RECIPIENT_ADD_BULK
+from ..constants import URL_MESSAGE_CREATE, URL_MESSAGE_RECIPIENT_ADD_BULK, URL_MESSAGE_SEND
 
 
 class Message(BaseManager):
@@ -55,3 +55,14 @@ class Message(BaseManager):
             base_url=url,
             data=contacts
         )
+
+    def send(self):
+        if not self.message_id:
+            raise AttributeError
+
+        url = URL_MESSAGE_SEND.format(
+            collector_id=self.collector_id,
+            message_id=self.message_id
+        )
+
+        return self.post(base_url=url, data={})

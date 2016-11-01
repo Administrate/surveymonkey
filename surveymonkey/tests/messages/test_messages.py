@@ -10,7 +10,7 @@ from httmock import HTTMock
 
 from surveymonkey.messages import Message, InviteConfig
 from surveymonkey.tests.messages.matchers.messages import be_sent, be_invite
-from ..mocks.messages import MessagesMock, MessagesRecipientsMock
+from ..mocks.messages import MessagesMock, MessagesRecipientsMock, MessagesSendMock
 from ..utils import create_fake_connection
 
 
@@ -187,3 +187,35 @@ class TestAddRecipients(object):
         with HTTMock(self.mock.recipient_add):
             with pytest.raises(KeyError):
                 message.recipients(recipients)
+
+
+class TestSendMessage(object):
+
+    def setup_class(self):
+        self.ACCESS_TOKEN, self.connection = create_fake_connection()
+        self.config = InviteConfig()
+        self.collector_id = random.randint(1234, 567890)
+        self.message_id = random.randint(1234, 567890)
+        self.mock = MessagesSendMock()
+
+    def test_message_sent(self):
+        message = Message(
+            connection=self.connection,
+            collector_id=self.collector_id,
+            message_id=self.message_id,
+        )
+
+        with HTTMock(self.mock.send):
+            response = message.send()
+
+        expect(response).to(have_key("is_scheduled", True))
+
+    def test_exception_raised_if_message_id_is_not_found(self):
+        message = Message(
+            connection=self.connection,
+            collector_id=self.collector_id,
+        )
+
+        with HTTMock(self.mock.send):
+            with pytest.raises(AttributeError):
+                message.send()

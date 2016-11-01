@@ -12,6 +12,7 @@ URL_COLLECTOR_RESPONSES_BULK = "%s/collectors/{collector_id}/responses/bulk" % A
 
 URL_MESSAGE_CREATE = "%s/collectors/{collector_id}/messages" % API_URL
 URL_MESSAGE_RECIPIENT_ADD_BULK = "%s/collectors/{collector_id}/messages/{message_id}/recipients/bulk" % API_URL  # noqa:E501
+URL_MESSAGE_SEND = "%s/collectors/{collector_id}/messages/{message_id}/send" % API_URL
 
 URL_WEBHOOKS = "%s/webhooks" % API_URL
 
