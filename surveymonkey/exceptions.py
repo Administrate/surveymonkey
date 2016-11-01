@@ -46,24 +46,38 @@ class SurveyMonkeyUserDeleted(SurveyMonkeyException):
 
 
 def response_raises(response):
-    if response.status_code == 200:
-        return
-    elif response.status_code == 400:
-        raise SurveyMonkeyBadRequest(response)
-    elif response.status_code == 401:
-        raise SurveyMonkeyAuthorizationError(response)
-    elif response.status_code == 403:
-        raise SurveyMonkeyPermissionError(response)
-    elif response.status_code == 404:
+
+    def _not_found(response):
         if response.json()["error"]["id"] == "1052":
-            raise SurveyMonkeyUserSoftDeleted(response)
+            return SurveyMonkeyUserSoftDeleted
         else:
-            raise SurveyMonkeyResourceNotFound(response)
-    elif response.status_code == 409:
-        raise SurveyMonkeyResourceConflict(response)
-    elif response.status_code == 413:
-        raise SurveyMonkeyRequestEntityTooLarge(response)
-    elif response.status_code in [500, 503]:
-        raise SurveyMonkeyInternalServerError(response)
-    elif response.status_code == 410:
-        raise SurveyMonkeyUserDeleted(response)
+            return SurveyMonkeyResourceNotFound
+
+    def _client_error(code):
+        return {
+            400: SurveyMonkeyBadRequest,
+            401: SurveyMonkeyAuthorizationError,
+            403: SurveyMonkeyPermissionError,
+            409: SurveyMonkeyResourceConflict,
+            413: SurveyMonkeyRequestEntityTooLarge,
+            410: SurveyMonkeyUserDeleted
+        }.get(code)
+
+    def _server_error(code):
+        return {
+            500: SurveyMonkeyInternalServerError,
+            503: SurveyMonkeyInternalServerError
+        }.get(code)
+
+    code = response.status_code
+
+    if code == 200:
+        return
+    elif code == 404:
+        exception = _not_found(response)
+    elif 400 <= code <= 499:
+        exception = _client_error(code)
+    elif 500 <= code <= 599:
+        exception = _server_error(code)
+
+    raise exception(response)
