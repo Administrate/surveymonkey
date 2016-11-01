@@ -3,6 +3,5 @@
 
 class SurveyMonkeyConnection(object):
 
-    def __init__(self, access_token, api_key):
+    def __init__(self, access_token):
         self.ACCESS_TOKEN = access_token
-        self.API_KEY = api_key

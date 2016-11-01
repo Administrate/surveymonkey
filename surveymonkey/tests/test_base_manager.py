@@ -4,7 +4,7 @@
 import six
 
 from httmock import HTTMock
-from expects import expect, have_key, have_keys, equal, start_with, end_with, be_a
+from expects import expect, have_key, have_keys, equal, be_a
 
 from surveymonkey.manager import BaseManager
 from surveymonkey.constants import URL_USER_ME
@@ -16,7 +16,7 @@ from .mocks.users import UsersResponseMocks
 class TestBaseManager(object):
 
     def setup_class(self):
-        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
+        self.ACCESS_TOKEN, self.connection = create_fake_connection()
         self.manager = BaseManager(self.connection)
         self.session = self.manager.create_session()
 
@@ -27,12 +27,6 @@ class TestBaseManager(object):
     def test_session_contains_authorization_bearer_token(self):
         expect(self.session.headers).to(have_key('Authorization'))
         expect(self.session.headers['Authorization']).to(equal("Bearer %s" % self.ACCESS_TOKEN))
-
-    def test_build_url_appends_our_api_key(self):
-        built_url = self.manager.build_url(URL_USER_ME)
-
-        expect(built_url).to(start_with(URL_USER_ME))
-        expect(built_url).to(end_with(self.API_KEY))
 
     def test_parse_response_returns_a_dict_with_correct_keys(self):
         with HTTMock(UsersResponseMocks().me):

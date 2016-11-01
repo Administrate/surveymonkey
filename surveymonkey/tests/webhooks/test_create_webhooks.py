@@ -33,7 +33,7 @@ multiple_survey_list = [
 class TestCreateWebhooks(object):
 
     def setup_class(self):
-        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
+        self.ACCESS_TOKEN, self.connection = create_fake_connection()
 
     def setup_method(self, method):
         pass

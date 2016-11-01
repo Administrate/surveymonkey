@@ -27,7 +27,6 @@ class BaseManager(object):
         per_page = kwargs.get("per_page", None)
 
         url = furl(url)
-        url.args["api_key"] = self.connection.API_KEY
         if page:
             url.args["page"] = page
         if per_page:

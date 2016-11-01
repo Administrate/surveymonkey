@@ -81,7 +81,7 @@ class TestSurveymonkeyExceptions(object):
 
     def setup_class(self):
         self.mocks = ErrorResponseMocks()
-        self.ACCESS_TOKEN, self.API_KEY, self.connection = create_fake_connection()
+        self.ACCESS_TOKEN, self.connection = create_fake_connection()
         self.manager = BaseManager(self.connection)
 
     @pytest.mark.parametrize("mock,surveymonkey_exception,error_message", ExceptionFixtures().possible_exceptions)  # noqa:E501
