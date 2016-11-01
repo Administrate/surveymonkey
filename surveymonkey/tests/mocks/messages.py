@@ -44,3 +44,28 @@ class MessagesMock(object):
         headers = create_quota_headers()
         content = self.config
         return response(200, content, headers)
+
+
+class MessagesRecipientsMock(object):
+
+    def __init__(self):
+        self.fake = Faker()
+
+    @all_requests
+    def recipient_add(self, url, request):
+        headers = create_quota_headers()
+
+        content = {
+            "succeeded": [{
+                "id": str(random.randint(1234, 567890)),
+                "email": self.fake.safe_email(),
+                "href": "https://api.surveymonkey.net/v3/collectors/1234/recipients/1234"
+            }],
+            "invalids": [],
+            "existing": [],
+            "bounced": [],
+            "opted_out": [],
+            "duplicate": []
+        }
+
+        return response(200, content, headers)
