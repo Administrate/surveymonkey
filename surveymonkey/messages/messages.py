@@ -53,7 +53,7 @@ class Message(BaseManager):
 
         return self.post(
             base_url=url,
-            data=contacts
+            data={'contacts': contacts}
         )
 
     def send(self):

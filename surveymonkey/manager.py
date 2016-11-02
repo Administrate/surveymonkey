@@ -71,7 +71,7 @@ class BaseManager(object):
     def make_request(self, base_url, method="GET", *args, **kwargs):
         session = self.create_session()
         url = self.build_url(base_url, *args, **kwargs)
-        data = json.dumps(kwargs.get("data")) if kwargs.get("data", False) else None
+        data = json.dumps(kwargs.get("data")) if kwargs.get("data") is not None else None
 
         return session.request(method, url, data=data)
 
