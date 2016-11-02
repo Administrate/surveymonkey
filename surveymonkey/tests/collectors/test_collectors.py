@@ -3,12 +3,12 @@
 
 import random
 
-from expects import expect, have_keys, have_length
+from expects import expect, have_keys, have_length, be_a
 from httmock import HTTMock
 
 from surveymonkey.collectors import Collector, EmailConfig, WeblinkConfig
 from surveymonkey.tests.collectors.matchers.collector import be_email, be_weblink, be_new
-from ..mocks.collectors import CollectorMock, CollectorsListMock
+from ..mocks.collectors import CollectorMock, CollectorsListMock, CollectorGetMock
 from ..utils import create_fake_connection
 
 
@@ -51,3 +51,20 @@ class TestCreateCollectors(object):
 
         expect(collector_list).to(have_length(2))
         expect(collector_list[0]).to(have_keys('href', 'id', 'name'))
+
+
+class TestGetCollector(object):
+
+    def setup_class(self):
+        self.ACCESS_TOKEN, self.connection = create_fake_connection()
+        self.collector = Collector(connection=self.connection)
+        self.collector_id = random.randint(1234, 56789)
+
+    def test_single_collector_returned_for_id(self):
+        mock = CollectorGetMock()
+
+        with HTTMock(mock.by_id):
+            collector = self.collector.by_id(collector_id=self.collector_id)
+
+        expect(collector).to(be_a(dict))
+        expect(collector).to(have_keys("id", "status", "type", "url"))
