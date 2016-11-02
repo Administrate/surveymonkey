@@ -3,7 +3,7 @@
 from furl import furl
 from ..manager import BaseManager
 from ..constants import (URL_COLLECTOR_CREATE, URL_COLLECTOR_RESPONSES_BULK,
-                         URL_SURVEY_RESPONSES_BULK)
+                         URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_SINGLE)
 
 
 class Collector(BaseManager):
@@ -28,6 +28,10 @@ class Collector(BaseManager):
     def list(self, survey_id):
         next_url = self.build_url(URL_COLLECTOR_CREATE, page=1, survey_id=survey_id)
         return self.get_list(next_url=next_url)
+
+    def by_id(self, collector_id):
+        url = URL_COLLECTOR_SINGLE.format(collector_id=collector_id)
+        return self.get(url)
 
 
 class CollectorResponsesBulk(BaseManager):

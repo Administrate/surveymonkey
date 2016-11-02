@@ -190,3 +190,38 @@ class CollectorResponsesBulkListMock(BaseListMock):
         }
 
         return response(200, content, headers)
+
+
+class CollectorGetMock(object):
+
+    def __init__(self, collector_id=random.randint(1234, 567890), type="weblink"):
+        self.fake = Faker()
+        self.collector_id = collector_id
+        self.type = type
+
+    @all_requests
+    def by_id(self, url, request):
+        headers = create_quota_headers()
+        content = {
+          "status": "open",
+          "id": self.collector_id,
+          "type": self.type,
+          "name": "My Collector",
+          "thank_you_message": "Thank you for taking my survey.",
+          "disqualification_message": "Thank you for taking my survey.",
+          "close_date": self.fake.iso8601(tzinfo=None),
+          "closed_page_message": "This survey is currently closed.",
+          "redirect_url": "https://www.surveymonkey.com",
+          "display_survey_results": False,
+          "edit_response_type": "until_complete",
+          "anonymous_type": "not_anonymous",
+          "allow_multiple_responses": False,
+          "date_modified": self.fake.iso8601(tzinfo=None),
+          "url": "https://www.surveymonkey.com/r/2Q3RXZB",
+          "date_created": "2015-10-06T12:56:55+00:00",
+          "sender_email": None,
+          "password_enabled": False,
+          "href": "{base_url}/{id}".format(base_url=URL_COLLECTOR_SINGLE, id=self.collector_id)
+        }
+
+        return response(200, content, headers)
