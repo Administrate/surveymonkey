@@ -10,7 +10,6 @@ from .utils import create_quota_headers, BaseListMock
 
 from surveymonkey.collectors.configs import is_email
 from surveymonkey.constants import (API_URL, BASE_URL, URL_COLLECTOR_CREATE, URL_COLLECTOR_SINGLE,
-                                    URL_SURVEY_RESPONSES, URL_COLLECTOR_RESPONSES,
                                     URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_RESPONSES_BULK)
 from surveymonkey.responses.constants import COMPLETED, PARTIAL, OVERQUOTA, DISQUALIFIED
 
@@ -98,10 +97,7 @@ class CollectorsListMock(BaseListMock):
         return response(200, content, headers)
 
 
-class CollectorResponsesListBaseMock(BaseListMock):
-
-    COLLECTOR_RESPONSE_URL = None
-    SURVEY_RESPONSES_URL = None
+class CollectorResponsesBulkListMock(BaseListMock):
 
     def __init__(self, total, collector_ids, status=None, config={}):
         self.collector_ids = collector_ids
@@ -112,12 +108,12 @@ class CollectorResponsesListBaseMock(BaseListMock):
         self.fake = Faker()
 
         if self.is_multi:
-            base_url = self.SURVEY_RESPONSES_URL.format(survey_id=self.survey_id)
+            base_url = URL_SURVEY_RESPONSES_BULK.format(survey_id=self.survey_id)
             base_url = furl(base_url).add({"collector_ids": ",".join(self.collector_ids)}).url
         else:
-            base_url = self.COLLECTOR_RESPONSE_URL.format(collector_id=self.collector_ids)
+            base_url = URL_COLLECTOR_RESPONSES_BULK.format(collector_id=self.collector_ids)
 
-        super(CollectorResponsesListBaseMock, self).__init__(total=total, base_url=base_url)
+        super(CollectorResponsesBulkListMock, self).__init__(total=total, base_url=base_url)
 
     def get_status(self):
         if self.status:
@@ -177,37 +173,8 @@ class CollectorResponsesListBaseMock(BaseListMock):
             "metadata": self.config.get("metadata", {})
         }
 
-
-class CollectorResponsesBulkListMock(CollectorResponsesListBaseMock):
-
-    COLLECTOR_RESPONSE_URL = URL_COLLECTOR_RESPONSES_BULK
-    SURVEY_RESPONSES_URL = URL_SURVEY_RESPONSES_BULK
-
     @all_requests
     def bulk(self, url, request):
-        headers = create_quota_headers()
-        per_page, current_page, pages = self.parse_url(url)
-
-        links = self.get_links(per_page, current_page, pages)
-        data = self.create_items(per_page, current_page, pages)
-
-        content = {
-            "per_page": per_page,
-            "total": self.total,
-            "page": current_page,
-            "data": data,
-            "links": links
-        }
-
-        return response(200, content, headers)
-
-
-class CollectorResponsesListMock(CollectorResponsesListBaseMock):
-    COLLECTOR_RESPONSE_URL = URL_COLLECTOR_RESPONSES
-    SURVEY_RESPONSES_URL = URL_SURVEY_RESPONSES
-
-    @all_requests
-    def list(self, url, request):
         headers = create_quota_headers()
         per_page, current_page, pages = self.parse_url(url)
 
