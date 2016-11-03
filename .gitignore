@@ -56,8 +56,9 @@ docs/_build/
 # PyBuilder
 target/
 
-# PyCharm
+# Dev Tools
 .idea/
+surveymonkey.paw
 
 # PyEnv
 .python-version
