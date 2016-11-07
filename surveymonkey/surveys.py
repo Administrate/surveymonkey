@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
-from .manager import BaseManager
-from .constants import URL_SURVEYS_LIST
+from surveymonkey.manager import BaseManager
+from surveymonkey.constants import URL_SURVEYS_LIST
 
 
 class Surveys(BaseManager):

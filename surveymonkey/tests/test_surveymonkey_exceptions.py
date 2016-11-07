@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import pytest
 from httmock import HTTMock
@@ -15,8 +16,8 @@ from surveymonkey.exceptions import (
     SurveyMonkeyUserDeleted
 )
 
-from .utils import create_fake_connection
-from .mocks.errors import ErrorResponseMocks
+from surveymonkey.tests.utils import create_fake_connection
+from surveymonkey.tests.mocks.errors import ErrorResponseMocks
 
 
 class ExceptionFixtures(object):

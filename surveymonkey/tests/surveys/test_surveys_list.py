@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from httmock import HTTMock
 from expects import expect, end_with, have_keys, have_length
 
 from surveymonkey.surveys import Surveys
 
-from ..utils import create_fake_connection
-from ..mocks.surveys import SurveyListMock
+from surveymonkey.tests.utils import create_fake_connection
+from surveymonkey.tests.mocks.surveys import SurveyListMock
 
 
 class TestSurveyList(object):

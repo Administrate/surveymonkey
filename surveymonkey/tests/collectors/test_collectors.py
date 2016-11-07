@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
 
@@ -8,8 +9,9 @@ from httmock import HTTMock
 
 from surveymonkey.collectors import Collector, EmailConfig, WeblinkConfig
 from surveymonkey.tests.collectors.matchers.collector import be_email, be_weblink, be_new
-from ..mocks.collectors import CollectorMock, CollectorsListMock, CollectorGetMock
-from ..utils import create_fake_connection
+from surveymonkey.tests.mocks.collectors import (CollectorMock, CollectorsListMock,
+                                                 CollectorGetMock)
+from surveymonkey.tests.utils import create_fake_connection
 
 
 class TestCreateCollectors(object):

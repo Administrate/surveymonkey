@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import six
 
@@ -9,8 +10,8 @@ from expects import expect, have_key, have_keys, equal, be_a
 from surveymonkey.manager import BaseManager
 from surveymonkey.constants import URL_USER_ME
 
-from .utils import create_fake_connection
-from .mocks.users import UsersResponseMocks
+from surveymonkey.tests.utils import create_fake_connection
+from surveymonkey.tests.mocks.users import UsersResponseMocks
 
 
 class TestBaseManager(object):

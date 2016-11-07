@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
 from faker import Faker
 from httmock import urlmatch, response
-from .utils import create_quota_headers
+from surveymonkey.tests.mocks.utils import create_quota_headers
 
 from surveymonkey.constants import URL_WEBHOOKS
 

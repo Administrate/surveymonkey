@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import six
 
-from ..manager import BaseManager
+from surveymonkey.manager import BaseManager
 from surveymonkey.webhooks.constants import SURVEY
 from surveymonkey.constants import URL_WEBHOOKS
 

@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from expects.matchers import Matcher
 from surveymonkey.messages.configs import is_invite

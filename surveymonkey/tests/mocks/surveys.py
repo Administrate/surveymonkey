@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import division
+from __future__ import absolute_import, division
 
 from faker import Factory
 from httmock import urlmatch, response
-from .utils import create_quota_headers
+from surveymonkey.tests.mocks.utils import create_quota_headers, BaseListMock
 
-from .utils import BaseListMock
 from surveymonkey.constants import URL_SURVEYS_LIST
 
 
