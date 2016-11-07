@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
-from faker import Faker
 from httmock import urlmatch, response
-from .utils import create_quota_headers
+from surveymonkey.tests.mocks.utils import create_quota_headers
+
+from surveymonkey.tests.conftest import faker as faker_fixture
+faker = faker_fixture()
 
 
 class UsersResponseMocks(object):
 
     def __init__(self):
-        self.fake = Faker()
+        self.fake = faker
 
     @urlmatch(path="/v3/users/me")
     def me(self, url, request):

@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division
 
-from faker import Factory
 from httmock import urlmatch, response
 from surveymonkey.tests.mocks.utils import create_quota_headers, BaseListMock
 
 from surveymonkey.constants import URL_SURVEYS_LIST
+
+from surveymonkey.tests.conftest import faker as faker_fixture
+faker = faker_fixture()
 
 
 class SurveyListMock(BaseListMock):
@@ -15,7 +17,7 @@ class SurveyListMock(BaseListMock):
 
     def create_surveys(self, per_page, current_page, pages):
         surveys = []
-        fake = Factory.create()
+        fake = faker
         remaining = self.calculate_number_remaining(per_page, current_page)
 
         if remaining > 0:

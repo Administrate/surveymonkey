@@ -3,16 +3,18 @@ from __future__ import absolute_import
 
 import random
 
-from faker import Faker
 from httmock import all_requests, response
 from surveymonkey.tests.mocks.utils import create_quota_headers
 from surveymonkey.constants import API_URL
+
+from surveymonkey.tests.conftest import faker as faker_fixture
+faker = faker_fixture()
 
 
 class MessagesMock(object):
 
     def __init__(self, config):
-        self.fake = Faker()
+        self.fake = faker
         self.config = {}
         self.id = "%s" % random.randint(12345, 67890)
 
@@ -49,7 +51,7 @@ class MessagesMock(object):
 class MessagesRecipientsMock(object):
 
     def __init__(self):
-        self.fake = Faker()
+        self.fake = faker
 
     @all_requests
     def recipient_add(self, url, request):
@@ -74,7 +76,7 @@ class MessagesRecipientsMock(object):
 class MessagesSendMock(object):
 
     def __init__(self):
-        self.fake = Faker()
+        self.fake = faker
 
     @all_requests
     def send(self, url, request):

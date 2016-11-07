@@ -1,23 +1,26 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
 from furl import furl
 
-from faker import Faker
 from httmock import all_requests, response
-from ..utils import weighted_choice
-from .utils import create_quota_headers, BaseListMock
+from surveymonkey.tests.utils import weighted_choice
+from surveymonkey.tests.mocks.utils import create_quota_headers, BaseListMock
 
 from surveymonkey.collectors.configs import is_email
 from surveymonkey.constants import (API_URL, BASE_URL, URL_COLLECTOR_CREATE, URL_COLLECTOR_SINGLE,
                                     URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_RESPONSES_BULK)
 from surveymonkey.responses.constants import COMPLETED, PARTIAL, OVERQUOTA, DISQUALIFIED
 
+from surveymonkey.tests.conftest import faker as faker_fixture
+faker = faker_fixture()
+
 
 class CollectorMock(object):
 
     def __init__(self, config):
-        self.fake = Faker()
+        self.fake = faker
         self.config = {}
         self.id = "%s" % random.randint(12345, 67890)
 
@@ -58,7 +61,7 @@ class CollectorMock(object):
 class CollectorsListMock(BaseListMock):
 
     def __init__(self, total, survey_id, base_url=URL_COLLECTOR_CREATE):
-        self.fake = Faker()
+        self.fake = faker
         url = base_url.format(
             survey_id=survey_id
         )
@@ -105,7 +108,7 @@ class CollectorResponsesBulkListMock(BaseListMock):
         self.config = config
         self.is_multi = isinstance(collector_ids, list)
         self.survey_id = random.randint(1234, 567890)
-        self.fake = Faker()
+        self.fake = faker
 
         if self.is_multi:
             base_url = URL_SURVEY_RESPONSES_BULK.format(survey_id=self.survey_id)
@@ -195,7 +198,7 @@ class CollectorResponsesBulkListMock(BaseListMock):
 class CollectorGetMock(object):
 
     def __init__(self, collector_id=random.randint(1234, 567890), type="weblink"):
-        self.fake = Faker()
+        self.fake = faker
         self.collector_id = collector_id
         self.type = type
 
