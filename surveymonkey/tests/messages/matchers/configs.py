@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 
 from expects.matchers import Matcher
-from surveymonkey.messages.configs import is_invite
+from surveymonkey.messages.configs import is_invite, is_reminder
 
 
 class BeInvite(Matcher):
@@ -10,6 +10,12 @@ class BeInvite(Matcher):
         return is_invite(configuration.type), []
 
 
-be_invite = BeInvite()
+class BeReminder(Matcher):
+    def _match(self, configuration):
+        return is_reminder(configuration.type), []
 
-__all__ = ['be_invite']
+
+be_invite = BeInvite()
+be_reminder = BeReminder()
+
+__all__ = ['be_invite', 'be_reminder']
