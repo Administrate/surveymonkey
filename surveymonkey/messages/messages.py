@@ -56,13 +56,19 @@ class Message(BaseManager):
             data={'contacts': contacts}
         )
 
-    def send(self):
+    def send(self, scheduled_date=None):
         if not self.message_id:
             raise AttributeError
+
+        if scheduled_date:
+            scheduled_date_string = scheduled_date.strftime("%Y-%m-%dT%H:%M:%S+00:00")
+            data = {"scheduled_date": scheduled_date_string}
+        else:
+            data = {}
 
         url = URL_MESSAGE_SEND.format(
             collector_id=self.collector_id,
             message_id=self.message_id
         )
 
-        return self.post(base_url=url, data={})
+        return self.post(base_url=url, data=data)
