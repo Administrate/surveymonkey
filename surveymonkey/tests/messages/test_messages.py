@@ -4,13 +4,18 @@ from __future__ import absolute_import
 
 import random
 import pytest
+from datetime import datetime, timedelta
 
 from faker import Faker
+from freezegun import freeze_time
 from expects import expect, have_key, have_length, be_above_or_equal
 from httmock import HTTMock
+from mock import MagicMock
 
 from surveymonkey.messages import Message, InviteConfig
 from surveymonkey.tests.messages.matchers.messages import be_sent, be_invite
+
+from surveymonkey.constants import URL_MESSAGE_SEND
 from surveymonkey.tests.mocks.messages import (MessagesMock, MessagesRecipientsMock,
                                                MessagesSendMock)
 from surveymonkey.tests.utils import create_fake_connection
@@ -221,3 +226,24 @@ class TestSendMessage(object):
         with HTTMock(self.mock.send):
             with pytest.raises(AttributeError):
                 message.send()
+
+    @freeze_time("2015-10-06 12:56:55")
+    def test_scheduled_date_correctly_formatted_for_post(self):
+        message = Message(
+            connection=self.connection,
+            collector_id=self.collector_id,
+            message_id=self.message_id,
+        )
+        message.post = MagicMock()
+
+        with HTTMock(self.mock.send):
+            message.send(scheduled_date=datetime.now() + timedelta(days=3))
+
+        url = URL_MESSAGE_SEND.format(
+            collector_id=self.collector_id,
+            message_id=self.message_id
+        )
+
+        message.post.assert_called_with(
+            base_url=url, data={'scheduled_date': '2015-10-09T12:56:55+00:00'}
+        )
