@@ -8,7 +8,8 @@ with open('README.rst') as readme_file:
 
 requirements = [
     'furl==0.5.6',
-    'six==1.10.0'
+    'six==1.10.0',
+    'pytest==3.0.3'
 ]
 
 test_requirements = [
