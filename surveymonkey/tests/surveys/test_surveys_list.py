@@ -1,13 +1,23 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
+import pytest
 from httmock import HTTMock
-from expects import expect, end_with, have_keys, have_length
+from expects import expect, end_with, have_keys, have_length, contain
 
 from surveymonkey.surveys import Surveys
+from surveymonkey.exceptions import SurveyMonkeyBadResponse
 
-from ..utils import create_fake_connection
-from ..mocks.surveys import SurveyListMock
+from surveymonkey.tests.utils import create_fake_connection
+from surveymonkey.tests.mocks.surveys import SurveyListMock
+
+
+survey_mocks = SurveyListMock(total=125)
+malformed_response_mocks = [
+    (survey_mocks.surveys_no_data),
+    (survey_mocks.surveys_no_links),
+]
 
 
 class TestSurveyList(object):
@@ -16,7 +26,7 @@ class TestSurveyList(object):
         self.ACCESS_TOKEN, self.connection = create_fake_connection()
 
     def setup_method(self, method):
-        self.mocks = SurveyListMock(total=125)
+        self.mocks = survey_mocks
         self.surveys = Surveys(self.connection)
 
     def test_get_first_page_of_surveys(self):
@@ -42,3 +52,11 @@ class TestSurveyList(object):
 
         expect(survey_list).to(have_length(10))
         expect(survey_list[0]).to(have_keys('href', 'id', 'title'))
+
+    @pytest.mark.parametrize("mock", malformed_response_mocks)
+    def test_surveymonkey_malformed_responses(self, mock):
+        with HTTMock(mock):
+            with pytest.raises(SurveyMonkeyBadResponse) as e:
+                self.surveys.surveys()
+
+            expect(str(e.value)).to(contain("Missing keys"))

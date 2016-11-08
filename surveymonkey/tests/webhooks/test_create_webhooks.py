@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
 import pytest
@@ -9,8 +10,8 @@ from expects import expect, have_key, equal
 from surveymonkey.webhooks import Webhook
 from surveymonkey.webhooks.constants import COMPLETED, DISQUALIFIED, UPDATED, SURVEY
 
-from ..mocks.webhooks import WebhookMock
-from ..utils import create_fake_connection
+from surveymonkey.tests.mocks.webhooks import WebhookMock
+from surveymonkey.tests.utils import create_fake_connection
 
 
 def create_random_number_of_object_ids():

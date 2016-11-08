@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from datetime import datetime
 import requests
 from furl import furl
 import json
 
-from .exceptions import response_raises
+from .exceptions import response_raises, SurveyMonkeyBadResponse
 
 
 class BaseManager(object):
@@ -65,8 +66,12 @@ class BaseManager(object):
 
         self.quota_exceeded = (self.daily_quota_exceeded or self.per_second_quota_exceeded)
 
-    def parse_response(self, response):
-        return response.json()
+    @staticmethod
+    def parse_response(response):
+        try:
+            return response.json()
+        except (ValueError, AttributeError):
+            raise SurveyMonkeyBadResponse("Unable to process the response. Bad JSON.")
 
     def make_request(self, base_url, method="GET", *args, **kwargs):
         session = self.create_session()
@@ -75,6 +80,11 @@ class BaseManager(object):
 
         return session.request(method, url, data=data)
 
+    @staticmethod
+    def verify_list_data(response):
+        if "links" not in response or "data" not in response:
+            raise SurveyMonkeyBadResponse("Unable to process the response. Missing keys.")
+
     def get_list(self, next_url, max_pages=100):
         guard = 0
         response_list = []
@@ -82,6 +92,7 @@ class BaseManager(object):
         while guard < max_pages and next_url:
             guard += 1
             response = self.get(base_url=next_url)
+            self.verify_list_data(response)
             response_list = response_list + response["data"]
             next_url = response["links"]["next"] if "next" in response["links"] else False
 

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from httmock import all_requests, response
-from .utils import create_quota_headers
+from surveymonkey.tests.mocks.utils import create_quota_headers
 
 
 class QuotaMocks(object):

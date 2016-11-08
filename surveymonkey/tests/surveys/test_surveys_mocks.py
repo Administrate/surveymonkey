@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from expects import expect, equal, have_key, have_length
 
-from ..mocks.surveys import SurveyListMock
+from surveymonkey.tests.mocks.surveys import SurveyListMock
 
 
 class TestSurveyMocksCount(object):  # Quis custodiet ipsos custodes?

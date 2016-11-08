@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 
 class SurveyMonkeyException(Exception):
@@ -11,6 +12,14 @@ class SurveyMonkeyException(Exception):
 
 class SurveyMonkeyBadRequest(SurveyMonkeyException):
     pass
+
+
+class SurveyMonkeyBadResponse(Exception):
+    message = "Unable to process the response"
+
+    def __init__(self, message, *args, **kwargs):
+        self.message = message if message else self.message
+        super(SurveyMonkeyBadResponse, self).__init__(self.message)
 
 
 class SurveyMonkeyAuthorizationError(SurveyMonkeyException):

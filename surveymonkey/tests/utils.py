@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
 from faker import Factory
@@ -8,13 +9,13 @@ from surveymonkey.surveymonkey import SurveyMonkeyConnection
 
 def create_fake_connection():
     fake = Factory.create()
-    ACCESS_TOKEN = fake.password(
+    access_token = fake.password(
         length=50, special_chars=True, digits=True,
         upper_case=True, lower_case=True
     )
-    connection = SurveyMonkeyConnection(ACCESS_TOKEN)
+    connection = SurveyMonkeyConnection(access_token)
 
-    return ACCESS_TOKEN, connection
+    return access_token, connection
 
 
 def weighted_choice(choices):

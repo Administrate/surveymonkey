@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import six
+import pytest
 
 from httmock import HTTMock
-from expects import expect, have_key, have_keys, equal, be_a
+from expects import expect, have_key, have_keys, equal, be_a, contain
 
 from surveymonkey.manager import BaseManager
 from surveymonkey.constants import URL_USER_ME
+from surveymonkey.exceptions import SurveyMonkeyBadResponse
 
-from .utils import create_fake_connection
-from .mocks.users import UsersResponseMocks
+from surveymonkey.tests.utils import create_fake_connection
+from surveymonkey.tests.mocks.users import UsersResponseMocks
 
 
 class TestBaseManager(object):
@@ -35,3 +38,9 @@ class TestBaseManager(object):
 
             expect(data).to(have_keys('id', 'username', 'email'))
             expect(data["id"]).to(be_a(six.text_type))  # IDs from SurveyMonkey are strings
+
+    def test_parse_response_raises_exception_on_malformed_response(self):
+        with pytest.raises(SurveyMonkeyBadResponse) as e:
+            BaseManager.parse_response('{This is malformed: [[[JSON]]}')
+
+        expect(str(e.value)).to(contain("JSON"))

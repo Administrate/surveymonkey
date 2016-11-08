@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
 import pytest
 from httmock import HTTMock
 from expects import expect, have_keys, have_length
 
-from ..utils import create_fake_connection
-from .matchers.bulk import be_completed, be_partial, be_overquota, be_disqualified
-from ..mocks.collectors import CollectorResponsesBulkListMock
+from surveymonkey.tests.utils import create_fake_connection
+from surveymonkey.tests.collectors.matchers.bulk import (be_completed, be_partial, be_overquota,
+                                                         be_disqualified)
+from surveymonkey.tests.mocks.collectors import CollectorResponsesBulkListMock
 
 from surveymonkey.collectors import CollectorResponsesBulk
 

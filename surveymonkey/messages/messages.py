@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
-from ..manager import BaseManager
-from ..constants import URL_MESSAGE_CREATE, URL_MESSAGE_RECIPIENT_ADD_BULK, URL_MESSAGE_SEND
+from surveymonkey.manager import BaseManager
+from surveymonkey.constants import (URL_MESSAGE_CREATE, URL_MESSAGE_RECIPIENT_ADD_BULK,
+                                    URL_MESSAGE_SEND)
 
 
 class Message(BaseManager):

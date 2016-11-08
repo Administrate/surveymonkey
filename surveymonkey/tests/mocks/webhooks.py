@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
-from faker import Faker
 from httmock import urlmatch, response
-from .utils import create_quota_headers
+from surveymonkey.tests.mocks.utils import create_quota_headers
 
 from surveymonkey.constants import URL_WEBHOOKS
+
+from surveymonkey.tests.conftest import faker as faker_fixture
+faker = faker_fixture()
 
 
 class WebhookMock(object):
@@ -15,7 +18,7 @@ class WebhookMock(object):
         self.object_type = object_type
         self.object_ids = object_ids
         self.subscription_url = subscription_url
-        self.fake = Faker()
+        self.fake = faker
 
     @urlmatch(path="/v3/webhooks")
     def create(self, url, request):

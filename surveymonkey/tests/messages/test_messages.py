@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 import random
 import pytest
@@ -10,8 +11,9 @@ from httmock import HTTMock
 
 from surveymonkey.messages import Message, InviteConfig
 from surveymonkey.tests.messages.matchers.messages import be_sent, be_invite
-from ..mocks.messages import MessagesMock, MessagesRecipientsMock, MessagesSendMock
-from ..utils import create_fake_connection
+from surveymonkey.tests.mocks.messages import (MessagesMock, MessagesRecipientsMock,
+                                               MessagesSendMock)
+from surveymonkey.tests.utils import create_fake_connection
 
 
 class TestCreateMessages(object):

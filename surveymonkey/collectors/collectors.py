@@ -1,9 +1,10 @@
-# -*- coding: utf-8 -*-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from furl import furl
-from ..manager import BaseManager
-from ..constants import (URL_COLLECTOR_CREATE, URL_COLLECTOR_RESPONSES_BULK,
-                         URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_SINGLE)
+from surveymonkey.manager import BaseManager
+from surveymonkey.constants import (URL_COLLECTOR_CREATE, URL_COLLECTOR_RESPONSES_BULK,
+                                    URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_SINGLE)
 
 
 class Collector(BaseManager):

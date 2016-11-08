@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import absolute_import
 
 from httmock import HTTMock
 from expects import expect, have_keys, be_false, be_true, be_none
 
 from surveymonkey.manager import BaseManager
-from .utils import create_fake_connection
-from .mocks.quota import QuotaMocks
+from surveymonkey.tests.utils import create_fake_connection
+from surveymonkey.tests.mocks.quota import QuotaMocks
 
 
 class TestQuotaChecking(object):
