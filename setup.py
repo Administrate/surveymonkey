@@ -18,7 +18,7 @@ test_requirements = [
 
 setup(
     name='surveymonkey',
-    version='0.5.0',
+    version='0.7.0',
     description="Python wrapper for the Survey Monkey v3 API",
     long_description=readme,
     author="Aaron Bassett",
