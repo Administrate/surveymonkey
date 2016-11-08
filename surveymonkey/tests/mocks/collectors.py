@@ -2,7 +2,6 @@
 from __future__ import absolute_import
 
 import random
-from furl import furl
 
 from httmock import all_requests, response
 from surveymonkey.tests.utils import weighted_choice
@@ -10,7 +9,7 @@ from surveymonkey.tests.mocks.utils import create_quota_headers, BaseListMock
 
 from surveymonkey.collectors.configs import is_email
 from surveymonkey.constants import (API_URL, BASE_URL, URL_COLLECTOR_CREATE, URL_COLLECTOR_SINGLE,
-                                    URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_RESPONSES_BULK)
+                                    URL_COLLECTOR_RESPONSES)
 from surveymonkey.responses.constants import COMPLETED, PARTIAL, OVERQUOTA, DISQUALIFIED
 
 from surveymonkey.tests.conftest import faker as faker_fixture
@@ -102,19 +101,13 @@ class CollectorsListMock(BaseListMock):
 
 class CollectorResponsesBulkListMock(BaseListMock):
 
-    def __init__(self, total, collector_ids, status=None, config={}):
-        self.collector_ids = collector_ids
+    def __init__(self, total, status=None, config={}):
+        self.collector_id = random.randint(1234, 567890)
         self.status = status
         self.config = config
-        self.is_multi = isinstance(collector_ids, list)
         self.survey_id = random.randint(1234, 567890)
         self.fake = faker
-
-        if self.is_multi:
-            base_url = URL_SURVEY_RESPONSES_BULK.format(survey_id=self.survey_id)
-            base_url = furl(base_url).add({"collector_ids": ",".join(self.collector_ids)}).url
-        else:
-            base_url = URL_COLLECTOR_RESPONSES_BULK.format(collector_id=self.collector_ids)
+        base_url = URL_COLLECTOR_RESPONSES.format(collector_id=self.collector_id)
 
         super(CollectorResponsesBulkListMock, self).__init__(total=total, base_url=base_url)
 
@@ -125,9 +118,6 @@ class CollectorResponsesBulkListMock(BaseListMock):
         return weighted_choice(
             [(COMPLETED, 20), (PARTIAL, 70), (OVERQUOTA, 5), (DISQUALIFIED, 5)]
         )
-
-    def get_valid_collector_id(self):
-        return random.choice(self.collector_ids) if self.is_multi else self.collector_ids
 
     def create_item(self):
         response_id = random.randint(123456, 34567890)
@@ -168,7 +158,7 @@ class CollectorResponsesBulkListMock(BaseListMock):
             "pages": [],
             "page_path": [],
             "recipient_id": "",
-            "collector_id": self.get_valid_collector_id(),
+            "collector_id": self.collector_id,
             "date_created": self.fake.iso8601(tzinfo=None),
             "survey_id": self.survey_id,
             "collection_mode": "default",

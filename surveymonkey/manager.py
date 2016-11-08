@@ -85,16 +85,19 @@ class BaseManager(object):
         if "links" not in response or "data" not in response:
             raise SurveyMonkeyBadResponse("Unable to process the response. Missing keys.")
 
-    def get_list(self, next_url, max_pages=100):
+    def get_list(self, next_url, max_pages=100, *args, **kwargs):
         guard = 0
         response_list = []
 
         while guard < max_pages and next_url:
             guard += 1
-            response = self.get(base_url=next_url)
+            response = self.get(base_url=next_url, *args, **kwargs)
             self.verify_list_data(response)
             response_list = response_list + response["data"]
             next_url = response["links"]["next"] if "next" in response["links"] else False
+
+            if next_url:
+                kwargs["page"] = furl(next_url).args["page"]
 
         return response_list
 

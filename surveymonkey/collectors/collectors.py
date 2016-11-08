@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-from furl import furl
 from surveymonkey.manager import BaseManager
-from surveymonkey.constants import (URL_COLLECTOR_CREATE, URL_COLLECTOR_RESPONSES_BULK,
-                                    URL_SURVEY_RESPONSES_BULK, URL_COLLECTOR_SINGLE)
+from surveymonkey.constants import (URL_COLLECTOR_CREATE, URL_COLLECTOR_RESPONSES,
+                                    URL_COLLECTOR_SINGLE)
 
 
 class Collector(BaseManager):
@@ -41,42 +40,43 @@ class CollectorResponsesBulk(BaseManager):
         super(CollectorResponsesBulk, self).__init__(connection)
         self.is_multi = isinstance(collector_ids, list)
         self.collector_ids = collector_ids
-        self.survey_id = survey_id
-        self.url = URL_SURVEY_RESPONSES_BULK if self.is_multi else URL_COLLECTOR_RESPONSES_BULK
-
-        if self.is_multi and not self.survey_id:
-            raise AttributeError("Multiple collectors requested with no survey id")
+        self.url = URL_COLLECTOR_RESPONSES
 
     def build_url(self, url, *args, **kwargs):
         if self.is_multi:
-            url = furl(url.format(survey_id=self.survey_id))
-            url.args["collector_ids"] = ",".join(self.collector_ids)
-            url = url.url
+            url = url.format(collector_id=kwargs.pop("collector_id"))
         else:
             url = url.format(collector_id=self.collector_ids)
 
+        status = kwargs.get("status", None)
+        url = "%s&status=%s" % (url, status) if status else url
+
         return super(CollectorResponsesBulk, self).build_url(url, *args, **kwargs)
 
-    def responses(self):
-        next_url = self.build_url(self.url, page=1)
-        return self.get_list(next_url=next_url)
+    def responses(self, status=None):
+        if self.is_multi:
+            response = []
+            for collector_id in self.collector_ids:
+                data = self.get_list(
+                    next_url=self.url,
+                    page=1,
+                    collector_id=collector_id,
+                    status=status
+                )
+                response = response + data
+        else:
+            response = self.get_list(next_url=self.url, page=1, status=status)
+
+        return response
 
     def completed(self):
-        url = self.build_url(self.url, page=1)
-        next_url = "%s&status=completed" % url
-        return self.get_list(next_url=next_url)
+        return self.responses(status="completed")
 
     def partial(self):
-        url = self.build_url(self.url, page=1)
-        next_url = "%s&status=partial" % url
-        return self.get_list(next_url=next_url)
+        return self.responses(status="partial")
 
     def overquota(self):
-        url = self.build_url(self.url, page=1)
-        next_url = "%s&status=overquota" % url
-        return self.get_list(next_url=next_url)
+        return self.responses(status="overquota")
 
     def disqualified(self):
-        url = self.build_url(self.url, page=1)
-        next_url = "%s&status=disqualified" % url
-        return self.get_list(next_url=next_url)
+        return self.responses(status="disqualified")
