@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division
 
+import random
 from httmock import urlmatch, response
 from surveymonkey.tests.mocks.utils import create_quota_headers, BaseListMock
 
@@ -85,6 +86,46 @@ class SurveyListMock(BaseListMock):
             "total": self.total,
             "page": current_page,
             "data": data
+        }
+
+        return response(200, content, headers)
+
+
+class SurveyGetMock(object):
+
+    def __init__(self, survey_id=random.randint(1234, 567890)):
+        self.fake = faker
+        self.survey_id = survey_id
+
+    @urlmatch(path='/v3/surveys')
+    def by_id(self, url, request):
+        headers = create_quota_headers()
+        content = {
+            "title": self.fake.catch_phrase(),
+            "nickname": "",
+            "custom_variables": {
+                "name": "label"
+            },
+            "language": "en",
+            "question_count": random.randint(1, 20),
+            "page_count": random.randint(1, 20),
+            "date_created": self.fake.iso8601(tzinfo=None),
+            "date_modified": self.fake.iso8601(tzinfo=None),
+            "id": self.survey_id,
+            "pages": [{
+              "questions": [{}]
+            }],
+            "buttons_text": {
+                "done_button": "Done",
+                "prev_button": "Prev",
+                "exit_button": "Exit",
+                "next_button": "Next"
+            },
+            "preview": "https://www.surveymonkey.com/r/Preview/",
+            "edit_url": "https://www.surveymonkey.com/create/",
+            "collect_url": "https://www.surveymonkey.com/collect/list",
+            "analyze_url": "http://www.surveymonkey.com/analyze/3bOmrM5mtfgBEcubFSDvR_2FbJ_2BrGx0E4aEBPKvsYFo9E_3D",  # noqa:E501
+            "summary_url": "https://www.surveymonkey.com/summary/"
         }
 
         return response(200, content, headers)

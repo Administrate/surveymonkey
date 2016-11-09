@@ -2,7 +2,7 @@
 from __future__ import absolute_import
 
 from surveymonkey.manager import BaseManager
-from surveymonkey.constants import URL_SURVEYS_LIST
+from surveymonkey.constants import URL_SURVEYS_LIST, URL_SURVEYS_DETAIL
 
 
 class Surveys(BaseManager):
@@ -16,3 +16,7 @@ class Surveys(BaseManager):
             # If no page specified assume they want all surveys
             next_url = self.build_url(URL_SURVEYS_LIST, page=1, per_page=per_page)
             return self.get_list(next_url=next_url, max_pages=max_pages)
+
+    def by_id(self, survey_id):
+        url = URL_SURVEYS_DETAIL.format(survey_id=survey_id)
+        return self.get(url)
