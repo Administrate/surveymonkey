@@ -36,7 +36,7 @@ class TestFetchBulkResponsesForSingleCollector(object):
         )
 
     def test_get_all_responses(self):
-        mock = CollectorResponsesBulkListMock(total=55, collector_ids=self.collector_id)
+        mock = CollectorResponsesBulkListMock(total=55)
         with HTTMock(mock.bulk):
             responses_list = self.bulk_collector.responses()
 
@@ -48,7 +48,6 @@ class TestFetchBulkResponsesForSingleCollector(object):
     def test_get_responses_by_status(self, status, method_name, be_status):
         mock = CollectorResponsesBulkListMock(
             total=5,
-            collector_ids=self.collector_id,
             status=status
         )
 
@@ -71,40 +70,30 @@ class TestFetchBulkResponsesForMultipleCollectors(object):
         ]
         self.bulk_collector = CollectorResponsesBulk(
             connection=self.connection,
-            collector_ids=self.collector_ids,
-            survey_id=random.randint(1234, 567890)
+            collector_ids=self.collector_ids
         )
 
     def test_get_all_responses(self):
-        mock = CollectorResponsesBulkListMock(total=5, collector_ids=self.collector_ids)
+        mock = CollectorResponsesBulkListMock(total=5)
         with HTTMock(mock.bulk):
             responses_list = self.bulk_collector.responses()
 
-        expect(responses_list).to(have_length(5))
+        total_length = len(self.collector_ids) * 5
+        expect(responses_list).to(have_length(total_length))
         expect(responses_list[0]).to(have_keys('analyze_url', 'response_status', 'date_modified'))
         expect(responses_list[0]).to(have_keys('id', 'collector_id', 'recipient_id', 'survey_id'))
-
-    def test_exception_raised_when_survey_id_not_supplied(self):
-        mock = CollectorResponsesBulkListMock(total=5, collector_ids=self.collector_ids)
-        with HTTMock(mock.bulk):
-            with pytest.raises(AttributeError):
-                CollectorResponsesBulk(
-                    connection=self.connection,
-                    collector_ids=self.collector_ids
-                )
-                self.bulk_collector.responses()
 
     @pytest.mark.parametrize("status,method_name,be_status", possible_statuses)
     def test_get_responses_by_status(self, status, method_name, be_status):
         mock = CollectorResponsesBulkListMock(
             total=5,
-            collector_ids=self.collector_ids,
             status=status
         )
 
         with HTTMock(mock.bulk):
             responses_list = getattr(self.bulk_collector, method_name)()
 
-        expect(responses_list).to(have_length(5))
+        total_length = len(self.collector_ids) * 5
+        expect(responses_list).to(have_length(total_length))
         for response in responses_list:
             expect(response).to(be_status)
