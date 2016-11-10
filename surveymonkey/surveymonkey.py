@@ -14,3 +14,6 @@ class BaseConfig(object):
     def __init__(self, **kwargs):
         for key, value in six.iteritems(kwargs):
             setattr(self, key, value)
+
+    def vars(self):
+        return vars(self)
