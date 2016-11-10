@@ -12,8 +12,8 @@ from expects import expect, have_key, have_length, be_above_or_equal
 from httmock import HTTMock
 from mock import MagicMock
 
-from surveymonkey.messages import Message, InviteConfig
-from surveymonkey.tests.messages.matchers.messages import be_sent, be_invite
+from surveymonkey.messages import Message, InviteConfig, ReminderConfig
+from surveymonkey.tests.messages.matchers.messages import be_sent, be_invite, be_reminder
 
 from surveymonkey.constants import URL_MESSAGE_SEND
 from surveymonkey.tests.mocks.messages import (MessagesMock, MessagesRecipientsMock,
@@ -44,6 +44,19 @@ class TestCreateMessages(object):
         expect(invite).to_not(be_sent)
         expect(invite).to(be_invite)
         expect(invite).to(have_key("id"))
+
+    def test_reminder_created(self):
+        config = ReminderConfig()
+        message = Message(
+            connection=self.connection,
+            collector_id=self.collector_id,
+            config=config
+        )
+
+        with HTTMock(MessagesMock(config).create):
+            reminder = message.create()
+
+        expect(reminder).to(be_reminder)
 
 
 class RecipientLists(object):

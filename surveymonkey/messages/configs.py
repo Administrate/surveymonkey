@@ -14,6 +14,7 @@ class ReminderConfig(BaseConfig):
     def __init__(self, **kwargs):
         super(ReminderConfig, self).__init__(**kwargs)
         self.type = "reminder"
+        self.recipient_status = "has_not_responded"
 
 
 def is_invite(type):

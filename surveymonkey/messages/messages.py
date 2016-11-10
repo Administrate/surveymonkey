@@ -20,7 +20,7 @@ class Message(BaseManager):
         )
         response = self.post(
             base_url=url,
-            data={"type": self.config.type}
+            data=self.config.vars()
         )
         self.message_id = response["id"]
         return response
