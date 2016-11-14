@@ -28,7 +28,7 @@ single_object_list = [
 ]
 
 
-multiple_obejct_list = [
+multiple_object_list = [
     (COMPLETED, SURVEY, "create_for_survey", create_random_number_of_object_ids()),
     (DISQUALIFIED, SURVEY, "create_for_survey", create_random_number_of_object_ids()),
     (UPDATED, SURVEY, "create_for_survey", create_random_number_of_object_ids()),
@@ -66,7 +66,7 @@ class TestCreateWebhooks(object):
         expect(response).to(have_key('event_type', event_type))
         expect(response["object_ids"]).to(equal([object_ids]))
 
-    @pytest.mark.parametrize("event_type,object_type,method,object_ids", multiple_obejct_list)
+    @pytest.mark.parametrize("event_type,object_type,method,object_ids", multiple_object_list)
     def test_webhook_create_for_multiple_objects(self, event_type, object_type, method, object_ids):  # noqa:E501
         mock = WebhookMock(
             event_type=event_type,
