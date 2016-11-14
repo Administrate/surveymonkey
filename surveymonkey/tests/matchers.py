@@ -20,6 +20,7 @@ class BeURL(Matcher):
     def _match(self, url):
         return validators.url(url, public=True), []
 
+
 be_after = BeAfter
 be_url = BeURL()
 
