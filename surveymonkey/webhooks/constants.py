@@ -7,3 +7,4 @@ UPDATED = "response_updated"
 
 # Object Types
 SURVEY = "survey"
+COLLECTOR = "collector"

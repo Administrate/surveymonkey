@@ -108,6 +108,7 @@ class RecipientLists(object):
     def missing_name_key(self):
         return self._delete_key("name")
 
+
 recipient_lists = RecipientLists()
 
 

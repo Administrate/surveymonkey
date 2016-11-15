@@ -4,6 +4,7 @@ include LICENSE
 include README.rst
 
 recursive-include surveymonkey/collectors *
+recursive-include surveymonkey/responses *
 recursive-include surveymonkey/webhooks *
 recursive-include surveymonkey/messages *
 recursive-include surveymonkey/tests *
