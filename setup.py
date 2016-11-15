@@ -28,6 +28,7 @@ setup(
     packages=[
         'surveymonkey',
         'surveymonkey.collectors',
+        'surveymonkey.responses',
         'surveymonkey.webhooks',
         'surveymonkey.messages'
     ],
