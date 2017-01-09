@@ -16,3 +16,4 @@ mock==2.0.0
 freezegun==0.3.8
 Faker==0.7.3
 furl==0.5.6
+validators==0.11.0
