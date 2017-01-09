@@ -7,6 +7,7 @@ import pytest
 
 from httmock import HTTMock
 from expects import expect, have_key, have_keys, equal, be_a, contain
+from mock import MagicMock
 
 from surveymonkey.manager import BaseManager
 from surveymonkey.constants import URL_USER_ME
@@ -44,3 +45,104 @@ class TestBaseManager(object):
             BaseManager.parse_response('{This is malformed: [[[JSON]]}')
 
         expect(str(e.value)).to(contain("JSON"))
+
+    def test_daily_quota_exceeded_is_none_if_quota_current_header_is_missing(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-Quota-Current"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.daily_quota_exceeded).to(equal(None))
+
+    def test_daily_quota_exceeded_is_none_if_quota_allotted_header_is_missing(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-Quota-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.daily_quota_exceeded).to(equal(None))
+
+    def test_daily_quota_exceeded_is_true_if_quota_current_exceeds_quota_allotted(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-Quota-Current"] = 1001
+        response.headers["X-Plan-Quota-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.daily_quota_exceeded).to(equal(True))
+
+    def test_daily_quota_exceeded_is_false_if_quota_current_is_less_than_quota_allotted(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-Quota-Current"] = 999
+        response.headers["X-Plan-Quota-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.daily_quota_exceeded).to(equal(False))
+
+    def test_per_second_quota_exceeded_is_none_if_qps_current_header_is_missing(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-QPS-Current"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.daily_quota_exceeded).to(equal(None))
+
+    def test_per_second_quota_exceeded_is_none_if_qps_allotted_header_is_missing(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-QPS-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.per_second_quota_exceeded).to(equal(None))
+
+    def test_per_second_quota_exceeded_is_true_if_qps_current_exceeds_qps_allotted(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-QPS-Current"] = 1001
+        response.headers["X-Plan-QPS-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.per_second_quota_exceeded).to(equal(True))
+
+    def test_per_second_quota_exceeded_is_false_if_qps_current_is_less_than_qps_allotted(self):
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-QPS-Current"] = 999
+        response.headers["X-Plan-QPS-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.per_second_quota_exceeded).to(equal(False))
+
+    def test_quota_exceeded_is_true_if_daily_quota_exceeded_is_true_and_per_second_quota_exceeded_is_false(self):  # noqa:E501
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-Quota-Current"] = 1001
+        response.headers["X-Plan-Quota-Allotted"] = 1000
+        response.headers["X-Plan-QPS-Current"] = 999
+        response.headers["X-Plan-QPS-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.quota_exceeded).to(equal(True))
+
+    def test_quota_exceeded_is_true_if_daily_quota_exceeded_is_false_and_per_second_quota_exceeded_is_true(self):  # noqa:E501
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-Quota-Current"] = 999
+        response.headers["X-Plan-Quota-Allotted"] = 1000
+        response.headers["X-Plan-QPS-Current"] = 1001
+        response.headers["X-Plan-QPS-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.quota_exceeded).to(equal(True))
+
+    def test_quota_exceeded_is_false_if_daily_quota_exceeded_is_false_and_per_second_quota_exceeded_is_false(self):  # noqa:E501
+        response = MagicMock()
+        response.headers = {}
+        response.headers["X-Plan-Quota-Current"] = 999
+        response.headers["X-Plan-Quota-Allotted"] = 1000
+        response.headers["X-Plan-QPS-Current"] = 999
+        response.headers["X-Plan-QPS-Allotted"] = 1000
+
+        self.manager.set_quotas(response)
+        expect(self.manager.quota_exceeded).to(equal(False))
