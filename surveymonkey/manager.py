@@ -50,14 +50,14 @@ class BaseManager(object):
                 response.headers["X-Plan-Quota-Reset"], "%A, %B %d, %Y %I:%M:%S %p %Z"
             )
 
-        if "Quota Current" and "Quota Allotted" in self.quotas:
+        if "Quota Current" in self.quotas and "Quota Allotted" in self.quotas:
             self.daily_quota_exceeded = (
                 self.quotas["Quota Current"] > self.quotas["Quota Allotted"]
             )
         else:
             self.daily_quota_exceeded = None
 
-        if "QPS Current" and "QPS Allotted" in self.quotas:
+        if "QPS Current" in self.quotas and "QPS Allotted" in self.quotas:
             self.per_second_quota_exceeded = (
                 self.quotas["QPS Current"] > self.quotas["QPS Allotted"]
             )
