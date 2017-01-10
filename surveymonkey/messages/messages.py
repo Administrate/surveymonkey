@@ -26,28 +26,42 @@ class Message(BaseManager):
         self.message_id = response["id"]
         return response
 
-    def validate_recipient(self, recipient, custom_field_mapping):
+    @staticmethod
+    def validate_recipient(recipient, custom_field_mapping, extra_field_mapping):
         custom_field_keys = list(custom_field_mapping.values()) if custom_field_mapping else []
-        for key in ['email'] + custom_field_keys:
+        extra_field_keys = list(extra_field_mapping.values()) if extra_field_mapping else []
+        for key in ['email'] + custom_field_keys + extra_field_keys:
             if key in recipient:
                 if not recipient[key]:
                     raise ValueError
             else:
                 raise KeyError
 
-    def recipients(self, recipients_list, custom_field_mapping=None):
+    @staticmethod
+    def add_custom_fields(contact, recipient, custom_field_mapping):
+        if custom_field_mapping:
+            contact['custom_fields'] = {
+                field_number: str(recipient[field_key]) for field_number, field_key in six.iteritems(custom_field_mapping)  # noqa:E501
+            }
+
+    @staticmethod
+    def add_extra_fields(contact, recipient, extra_field_mapping):
+        if extra_field_mapping:
+            contact['extra_fields'] = {
+                field_name: str(recipient[field_key]) for field_name, field_key in six.iteritems(extra_field_mapping)  # noqa:E501
+            }
+
+    def recipients(self, recipients_list, custom_field_mapping=None, extra_field_mapping=None):
         contacts = []
 
         if not self.message_id:
             raise AttributeError
 
         for recipient in recipients_list:
-            self.validate_recipient(recipient, custom_field_mapping)
+            self.validate_recipient(recipient, custom_field_mapping, extra_field_mapping)
             contact = {'email': recipient["email"]}
-            if custom_field_mapping:
-                contact['custom_fields'] = {
-                    field_number: str(recipient[field_key]) for field_number, field_key in six.iteritems(custom_field_mapping)  # noqa:E501
-                }
+            self.add_custom_fields(contact, recipient, custom_field_mapping)
+            self.add_extra_fields(contact, recipient, extra_field_mapping)
             contacts.append(contact)
 
         url = URL_MESSAGE_RECIPIENT_ADD_BULK.format(

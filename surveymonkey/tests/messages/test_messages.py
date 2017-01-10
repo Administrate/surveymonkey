@@ -66,11 +66,12 @@ class RecipientLists(object):
 
     def valid(self):
         return [
-            [{'name': self.fake.name(), 'email': self.fake.safe_email()}],
+            [{'name': self.fake.name(), 'email': self.fake.safe_email(), 'some_key': '2'}],
             [
                 {
                     'name': self.fake.name(),
-                    'email': self.fake.safe_email()
+                    'email': self.fake.safe_email(),
+                    'some_key': str(random.randint(1, 10))
                 } for x in range(1, random.randint(3, 10))
             ]
         ]
@@ -95,6 +96,12 @@ class RecipientLists(object):
             [None, ""]
         )
 
+    def missing_extra_field_value(self):
+        return self._invalidate_recipient_list(
+            "some_key",
+            [None, ""]
+        )
+
     def _delete_key(self, key):
         recipients = self.valid()
         recipients[0][0].pop(key)
@@ -107,6 +114,9 @@ class RecipientLists(object):
 
     def missing_custom_field_key(self):
         return self._delete_key("name")
+
+    def missing_extra_field_key(self):
+        return self._delete_key("some_key")
 
 
 recipient_lists = RecipientLists()
@@ -197,6 +207,31 @@ class TestAddRecipients(object):
         with HTTMock(self.mock.recipient_add):
             with pytest.raises(KeyError):
                 message.recipients(recipients, custom_field_mapping={'1': 'name'})
+
+    @pytest.mark.parametrize("recipients", recipient_lists.missing_extra_field_value())
+    def test_exception_raised_when_recipient_has_empty_extra_field(self, recipients):
+        message = Message(
+            connection=self.connection,
+            collector_id=self.collector_id,
+            message_id=self.message_id,
+        )
+
+        with HTTMock(self.mock.recipient_add):
+            with pytest.raises(ValueError):
+                message.recipients(recipients, extra_field_mapping={'some_field': 'some_key'})
+
+    @pytest.mark.parametrize("recipients", recipient_lists.missing_extra_field_key())
+    def test_exception_raised_when_recipient_dictionary_is_missing_extra_field_key(self,
+                                                                                   recipients):
+        message = Message(
+            connection=self.connection,
+            collector_id=self.collector_id,
+            message_id=self.message_id,
+        )
+
+        with HTTMock(self.mock.recipient_add):
+            with pytest.raises(KeyError):
+                message.recipients(recipients, custom_field_mapping={'some_field': 'some_key'})
 
     @pytest.mark.parametrize("recipients", recipient_lists.missing_email_key())
     def test_exception_raised_when_recipient_dictionary_is_missing_email_key(self, recipients):
