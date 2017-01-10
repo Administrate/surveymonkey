@@ -186,7 +186,8 @@ class TestAddRecipients(object):
                 message.recipients(recipients, custom_field_mapping={'1': 'name'})
 
     @pytest.mark.parametrize("recipients", recipient_lists.missing_custom_field_key())
-    def test_exception_raised_when_recipient_dictionary_is_missing_custom_field_key(self, recipients):
+    def test_exception_raised_when_recipient_dictionary_is_missing_custom_field_key(self,
+                                                                                    recipients):
         message = Message(
             connection=self.connection,
             collector_id=self.collector_id,
