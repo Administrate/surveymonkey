@@ -89,7 +89,7 @@ class RecipientLists(object):
             [None, ""]
         )
 
-    def missing_name_value(self):
+    def missing_custom_field_value(self):
         return self._invalidate_recipient_list(
             "name",
             [None, ""]
@@ -105,7 +105,7 @@ class RecipientLists(object):
     def missing_email_key(self):
         return self._delete_key("email")
 
-    def missing_name_key(self):
+    def missing_custom_field_key(self):
         return self._delete_key("name")
 
 
@@ -173,8 +173,8 @@ class TestAddRecipients(object):
             with pytest.raises(ValueError):
                 message.recipients(recipients)
 
-    @pytest.mark.parametrize("recipients", recipient_lists.missing_name_value())
-    def test_exception_raised_when_recipient_has_empty_name(self, recipients):
+    @pytest.mark.parametrize("recipients", recipient_lists.missing_custom_field_value())
+    def test_exception_raised_when_recipient_has_empty_custom_field(self, recipients):
         message = Message(
             connection=self.connection,
             collector_id=self.collector_id,
@@ -183,10 +183,11 @@ class TestAddRecipients(object):
 
         with HTTMock(self.mock.recipient_add):
             with pytest.raises(ValueError):
-                message.recipients(recipients)
+                message.recipients(recipients, custom_field_mapping={'1': 'name'})
 
-    @pytest.mark.parametrize("recipients", recipient_lists.missing_name_key())
-    def test_exception_raised_when_recipient_dictionary_is_missing_name_key(self, recipients):
+    @pytest.mark.parametrize("recipients", recipient_lists.missing_custom_field_key())
+    def test_exception_raised_when_recipient_dictionary_is_missing_custom_field_key(self,
+                                                                                    recipients):
         message = Message(
             connection=self.connection,
             collector_id=self.collector_id,
@@ -195,7 +196,7 @@ class TestAddRecipients(object):
 
         with HTTMock(self.mock.recipient_add):
             with pytest.raises(KeyError):
-                message.recipients(recipients)
+                message.recipients(recipients, custom_field_mapping={'1': 'name'})
 
     @pytest.mark.parametrize("recipients", recipient_lists.missing_email_key())
     def test_exception_raised_when_recipient_dictionary_is_missing_email_key(self, recipients):
