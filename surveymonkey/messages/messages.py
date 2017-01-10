@@ -25,28 +25,28 @@ class Message(BaseManager):
         self.message_id = response["id"]
         return response
 
-    def validate_recipient(self, recipient):
-        if "email" and "name" in recipient:
-            if not recipient["email"] or not recipient["name"]:
-                raise ValueError
-        else:
-            raise KeyError
+    def validate_recipient(self, recipient, custom_field_mapping):
+        custom_field_keys = custom_field_mapping.values() if custom_field_mapping else []
+        for key in ['email'] + custom_field_keys:
+            if key in recipient:
+                if not recipient[key]:
+                    raise ValueError
+            else:
+                raise KeyError
 
-    def recipients(self, recipients_list):
+    def recipients(self, recipients_list, custom_field_mapping=None):
         contacts = []
 
         if not self.message_id:
             raise AttributeError
 
         for recipient in recipients_list:
-            self.validate_recipient(recipient)
-
-            contacts.append({
-                "email": recipient["email"],
-                "custom_fields": {
-                    "1": recipient["name"]
-                }
-            })
+            self.validate_recipient(recipient, custom_field_mapping)
+            contact = {'email': recipient["email"]}
+            if custom_field_mapping:
+                contact['custom_fields'] = {field_number: recipient[field_key]
+                                            for field_number, field_key in custom_field_mapping.iteritems()}
+            contacts.append(contact)
 
         url = URL_MESSAGE_RECIPIENT_ADD_BULK.format(
             collector_id=self.collector_id,
