@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
+import six
 from surveymonkey.manager import BaseManager
 from surveymonkey.constants import (URL_MESSAGE_CREATE, URL_MESSAGE_RECIPIENT_ADD_BULK,
                                     URL_MESSAGE_SEND)
@@ -45,7 +46,7 @@ class Message(BaseManager):
             contact = {'email': recipient["email"]}
             if custom_field_mapping:
                 contact['custom_fields'] = {
-                    field_number: recipient[field_key] for field_number, field_key in custom_field_mapping.iteritems()  # noqa:E501
+                    field_number: recipient[field_key] for field_number, field_key in six.iteritems(custom_field_mapping)  # noqa:E501
                 }
             contacts.append(contact)
 
