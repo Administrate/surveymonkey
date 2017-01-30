@@ -6,7 +6,9 @@ import random
 
 from expects import expect, have_keys, have_length, be_a
 from httmock import HTTMock
+from mock import patch
 
+from surveymonkey.constants import URL_COLLECTOR_CREATE
 from surveymonkey.collectors import Collector, EmailConfig, WeblinkConfig
 from surveymonkey.tests.collectors.matchers.collector import be_email, be_weblink, be_new
 from surveymonkey.tests.mocks.collectors import (CollectorMock, CollectorsListMock,
@@ -53,6 +55,18 @@ class TestCreateCollectors(object):
 
         expect(collector_list).to(have_length(2))
         expect(collector_list[0]).to(have_keys('href', 'id', 'name'))
+
+    @patch('surveymonkey.collectors.collectors.Collector.post')
+    def test_collector_created_with_custom_name(self, mock_post):
+        config = EmailConfig(name="This is a different name")
+        collector = Collector(connection=self.connection, config=config)
+        collector.create(1234)
+
+        mock_post.assert_called_with(
+            base_url=URL_COLLECTOR_CREATE,
+            data={'name': 'This is a different name', 'type': 'email'},
+            survey_id=1234
+        )
 
 
 class TestGetCollector(object):
