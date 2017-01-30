@@ -22,7 +22,7 @@ class Collector(BaseManager):
     def create(self, survey_id):
         return self.post(
             base_url=URL_COLLECTOR_CREATE,
-            data={"type": self.config.type},
+            data=self.config.vars(),
             survey_id=survey_id
         )
 
