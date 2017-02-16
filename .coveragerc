@@ -1,2 +1,2 @@
 [run]
-omit = surveymonkey/tests/*
+omit = setup.py,surveymonkey/tests/*,.tox/*

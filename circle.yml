@@ -10,3 +10,5 @@ dependencies:
 test:
   override:
     - make test-all
+  post:
+    - bash <(curl -s https://codecov.io/bash)
