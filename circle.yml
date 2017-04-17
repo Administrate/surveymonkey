@@ -10,3 +10,7 @@ dependencies:
 test:
   override:
     - make test-all
+
+notify:
+  webhooks:
+    - url: http://statistics.administratehq.com/hooks/ci
