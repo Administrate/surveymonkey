@@ -51,3 +51,173 @@ class ResponseGetMock(object):
             "collection_mode": "default"
         }
         return response(200, content, headers)
+
+
+class ResponseValidationMocks(object):
+
+    @staticmethod
+    def _valid_response_meta():
+        return {
+            "id": "12345",
+            "collector_id": "12345",
+            "survey_id": "12345",
+            "analyze_url": "http://www.surveymonkey.com/analyze/browse/",
+            "edit_url": "http://www.surveymonkey.com/r/",
+            "href": "https://api.surveymonkey.net/v3/surveys/",
+            "ip_address": "127.0.0.1",
+            "response_status": "completed",
+            "collection_mode": "default",
+            "date_created": "2015-12-28T21:59:38+00:00",
+            "date_modified": "2015-12-28T21:59:38+00:00",
+        }
+
+    @staticmethod
+    def _valid_response_pages():
+        return [{
+            "id": "12345",
+            "questions": [{
+                "id": "12345",
+                "answers": [{
+                    "other_id": "12345",
+                    "text": "This is my other text"
+                }]
+            }]
+        }]
+
+    def valid_response(self):
+        response_obj = self._valid_response_meta()
+        response_obj["pages"] = self._valid_response_pages()
+        return response_obj
+
+    @all_requests
+    def invalid_json_content(self, url, request):
+        headers = create_quota_headers()
+        content = "{'message': ['this isn't valid': None]]"
+
+        return response(200, content, headers)
+
+    @all_requests
+    def does_not_match_schema(self, url, request):
+        headers = create_quota_headers()
+        content = {
+            "error": "Does not match schema"
+        }
+
+        return response(200, content, headers)
+
+    @all_requests
+    def invalid_analyze_url(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["analyze_url"] = "http://example.com"
+
+        return response(200, content, headers)
+
+    @all_requests
+    def invalid_edit_url(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["edit_url"] = "http://example.com"
+
+        return response(200, content, headers)
+
+    @all_requests
+    def invalid_href_url(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["href"] = "http://example.com"
+
+        return response(200, content, headers)
+
+    @all_requests
+    def response_status_unknown(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        # Set our response status to an invalid value
+        content["response_status"] = "unknown"
+
+        return response(200, content, headers)
+
+    @all_requests
+    def remove_text_from_answer_type_other(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        del content["pages"][0]["questions"][0]["answers"][0]["text"]
+
+        return response(200, content, headers)
+
+    @all_requests
+    def choice_col_row_answer(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"][0] = {
+            "col_id": "12345", "choice_id": "12345", "row_id": "12345"
+        }
+
+        return response(200, content, headers)
+
+    @all_requests
+    def choice_only_answer(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"][0] = {"choice_id": "12345"}
+
+        return response(200, content, headers)
+
+    @all_requests
+    def choice_row_answer(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"][0] = {
+            "row_id": "12345", "choice_id": "12345"
+        }
+
+        return response(200, content, headers)
+
+    @all_requests
+    def text_only_answer(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"][0] = {"text": "This is some text"}
+
+        return response(200, content, headers)
+
+    @all_requests
+    def text_and_row_answer(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"][0] = {
+            "text": "This is some text",
+            "row_id": "12345"
+        }
+
+        return response(200, content, headers)
+
+    @all_requests
+    def text_and_content_type_answer(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"][0] = {
+            "text": "ui-previewer-demo.gif",
+            "content_type": "image/gif"
+        }
+
+        return response(200, content, headers)
+
+    @all_requests
+    def answer_is_empty_dict(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"][0] = {}
+
+        return response(200, content, headers)
+
+    @all_requests
+    def answer_is_multiple(self, url, request):
+        headers = create_quota_headers()
+        content = self.valid_response()
+        content["pages"][0]["questions"][0]["answers"].append({
+            "text": "this is another answer"
+        })
+
+        return response(200, content, headers)
