@@ -6,8 +6,9 @@ import six
 
 class SurveyMonkeyConnection(object):
 
-    def __init__(self, access_token):
+    def __init__(self, access_token, access_url=None):
         self.ACCESS_TOKEN = access_token
+        self.ACCESS_URL = access_url
 
 
 class BaseConfig(object):

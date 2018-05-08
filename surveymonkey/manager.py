@@ -6,6 +6,7 @@ import requests
 from furl import furl
 import json
 
+from surveymonkey.constants import API_URL
 from .exceptions import response_raises, SurveyMonkeyBadResponse
 
 
@@ -13,6 +14,7 @@ class BaseManager(object):
 
     def __init__(self, connection):
         self.connection = connection
+        self.access_url = getattr(connection, 'access_url', None)
 
     def create_session(self):
         session = requests.Session()
@@ -23,7 +25,13 @@ class BaseManager(object):
 
         return session
 
+    def add_base_url(self, url):
+        if str(self.access_url) in url or API_URL in url:
+            return url
+        return (self.access_url or API_URL) + url
+
     def build_url(self, url, *args, **kwargs):
+        url = self.add_base_url(url)
         page = kwargs.get("page", None)
         per_page = kwargs.get("per_page", None)
 
