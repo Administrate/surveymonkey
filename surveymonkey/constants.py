@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 
 BASE_URL = "http://www.surveymonkey.com"
-
-API_VERSION = "v3"
-API_URL = "https://api.surveymonkey.net/" + API_VERSION
+API_URL = "https://api.surveymonkey.net/v3"
 
 URL_USER_ME = "/users/me"
 

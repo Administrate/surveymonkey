@@ -14,12 +14,12 @@ class BaseManager(object):
 
     def __init__(self, connection):
         self.connection = connection
-        self.access_url = connection.access_url
+        self.access_url = getattr(connection, 'access_url', None)
 
     def create_session(self):
         session = requests.Session()
         session.headers.update({
-            "Authorization": "Bearer %s" % self.connection.access_token,
+            "Authorization": "Bearer %s" % self.connection.ACCESS_TOKEN,
             "Content-Type": "application/json"
         })
 
