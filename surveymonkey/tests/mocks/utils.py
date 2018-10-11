@@ -30,39 +30,38 @@ class BaseListMock(object):
         self.total = total
         self.base_url = base_url
 
-    def get_links(self, per_page, current_page, pages):
+    def get_links(self, per_page, current_page, pages, folder_id=None):
         last_page = pages
 
         def _clean_base_url(url):  # Prevent duplicate qs params
-            return furl(url).remove(['per_page', 'current_page', 'pages']).copy()
+            return furl(url).remove(['per_page', 'current_page', 'pages', 'folder_id']).copy()
 
         links = dict()
-        links["self"] = _clean_base_url(self.base_url).add({
+        default_link_values = {
             "per_page": per_page,
             "page": current_page
-        }).url
+        }
+        if folder_id is not None:
+            default_link_values['folder_id'] = folder_id
+
+        links["self"] = _clean_base_url(self.base_url).add(default_link_values).url
 
         if last_page > 1:
             if current_page != last_page:
-                links["last"] = _clean_base_url(self.base_url).add({
-                    "per_page": per_page,
-                    "page": current_page
-                }).url
+                links["last"] = _clean_base_url(self.base_url).add(default_link_values).url
 
                 if current_page < last_page:
-                    links["next"] = _clean_base_url(self.base_url).add({
-                        "per_page": per_page,
-                        "page": current_page + 1
-                    }).url
+                    next_link_values = default_link_values
+                    next_link_values['page'] = current_page + 1
+                    links["next"] = _clean_base_url(self.base_url).add(next_link_values).url
             if current_page != 1:
-                links["first"] = _clean_base_url(self.base_url).add({
-                    "per_page": per_page,
-                    "page": 1
-                }).url
-                links["prev"] = _clean_base_url(self.base_url).add({
-                    "per_page": per_page,
-                    "page": current_page - 1
-                }).url
+                first_link_values = default_link_values
+                first_link_values['page'] = 1
+                links["first"] = _clean_base_url(self.base_url).add(first_link_values).url
+
+                prev_link_values = default_link_values
+                prev_link_values['page'] = current_page - 1
+                links["prev"] = _clean_base_url(self.base_url).add(prev_link_values).url
 
         return links
 
@@ -80,6 +79,12 @@ class BaseListMock(object):
         current_page = int(url.args.get("page", 1))
         pages = math.ceil(self.total / per_page)
         return per_page, current_page, pages
+
+    def parse_url_with_folder(self, url):
+        per_page, current_page, pages = self.parse_url(url)
+        url = furl(url.geturl())
+        folder_id = url.args.get("folder_id", None)
+        return per_page, current_page, pages, folder_id
 
     def create_item(self):
         raise NotImplementedError("Implemented in subclass")

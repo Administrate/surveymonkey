@@ -34,12 +34,15 @@ class BaseManager(object):
         url = self.add_base_url(url)
         page = kwargs.get("page", None)
         per_page = kwargs.get("per_page", None)
+        folder_id = kwargs.get("folder_id", None)
 
         url = furl(url)
         if page:
             url.args["page"] = page
         if per_page:
             url.args["per_page"] = per_page
+        if folder_id:
+            url.args["folder_id"] = folder_id
 
         return url.url
 

@@ -43,9 +43,9 @@ class SurveyListMock(BaseListMock):
     @urlmatch(path="/v3/surveys")
     def surveys(self, url, request):
         headers = create_quota_headers()
-        per_page, current_page, pages = self.parse_url(url)
+        per_page, current_page, pages, folder_id = self.parse_url_with_folder(url)
 
-        links = self.get_links(per_page, current_page, pages)
+        links = self.get_links(per_page, current_page, pages, folder_id)
         data = self.create_surveys(per_page, current_page, pages)
 
         content = {
@@ -61,7 +61,7 @@ class SurveyListMock(BaseListMock):
     @urlmatch(path='/v3/surveys')
     def surveys_no_data(self, url, request):
         headers = create_quota_headers()
-        per_page, current_page, pages = self.parse_url(url)
+        per_page, current_page, pages, folder_id = self.parse_url_with_folder(url)
 
         links = self.get_links(per_page, current_page, pages)
 
@@ -77,7 +77,7 @@ class SurveyListMock(BaseListMock):
     @urlmatch(path='/v3/surveys')
     def surveys_no_links(self, url, request):
         headers = create_quota_headers()
-        per_page, current_page, pages = self.parse_url(url)
+        per_page, current_page, pages, folder_id = self.parse_url_with_folder(url)
 
         data = self.create_surveys(per_page, current_page, pages)
 
