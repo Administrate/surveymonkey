@@ -15,8 +15,8 @@ from surveymonkey.tests.mocks.surveys import SurveyListMock
 
 survey_mocks = SurveyListMock(total=125)
 malformed_response_mocks = [
-    (survey_mocks.surveys_no_data),
-    (survey_mocks.surveys_no_links),
+    survey_mocks.surveys_no_data,
+    survey_mocks.surveys_no_links,
 ]
 
 
@@ -60,3 +60,9 @@ class TestSurveyList(object):
                 self.surveys.surveys()
 
             expect(str(e.value)).to(contain("Missing keys"))
+
+    def test_get_survey_list_by_folder_id(self):
+        with HTTMock(self.mocks.surveys):
+            survey_list = self.surveys.surveys(per_page=50, folder_id=1)
+
+        expect(survey_list).to(have_length(125))

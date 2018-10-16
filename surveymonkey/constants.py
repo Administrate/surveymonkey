@@ -11,6 +11,8 @@ URL_SURVEYS_DETAIL = "/surveys/{survey_id}/details"
 URL_SURVEYS_LIST = "/surveys"
 URL_SURVEY_RESPONSES_BULK = "/surveys/{survey_id}/responses/bulk"
 
+URL_FOLDERS_LIST = '/survey_folders'
+
 URL_COLLECTOR_CREATE = "/surveys/{survey_id}/collectors"
 URL_COLLECTOR_SINGLE = "/collectors/{collector_id}"
 URL_COLLECTOR_RESPONSES_BULK = "/collectors/{collector_id}/responses/bulk"
