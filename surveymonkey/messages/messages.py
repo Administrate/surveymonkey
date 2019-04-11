@@ -57,6 +57,8 @@ class Message(BaseManager):
         if not self.message_id:
             raise AttributeError
 
+        print("\ntest message\n")
+
         for recipient in recipients_list:
             self.validate_recipient(recipient, custom_field_mapping, extra_field_mapping)
             contact = {'email': recipient["email"]}
