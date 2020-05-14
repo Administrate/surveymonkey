@@ -7,8 +7,7 @@ from surveymonkey.tests.mocks.utils import create_quota_headers
 
 from surveymonkey.constants import URL_WEBHOOKS
 
-from surveymonkey.tests.conftest import faker as faker_fixture
-faker = faker_fixture()
+from surveymonkey.tests.conftest import faker
 
 
 class WebhookMock(object):
@@ -18,7 +17,6 @@ class WebhookMock(object):
         self.object_type = object_type
         self.object_ids = object_ids
         self.subscription_url = subscription_url
-        self.fake = faker
 
     @urlmatch(path="/v3/webhooks")
     def create(self, url, request):
@@ -26,7 +24,7 @@ class WebhookMock(object):
         headers = create_quota_headers()
         content = {
             "id": id,
-            "name": self.fake.catch_phrase(),
+            "name": faker.catch_phrase(),
             "event_type": self.event_type,
             "object_ids": self.object_ids,
             "subscription_url": self.subscription_url,
