@@ -7,14 +7,12 @@ from httmock import all_requests, response
 from surveymonkey.tests.mocks.utils import create_quota_headers
 from surveymonkey.constants import API_URL
 
-from surveymonkey.tests.conftest import faker as faker_fixture
-faker = faker_fixture()
+from surveymonkey.tests.conftest import faker
 
 
 class MessagesMock(object):
 
     def __init__(self, config):
-        self.fake = faker
         self.config = {}
         self.id = "%s" % random.randint(12345, 67890)
 
@@ -31,7 +29,7 @@ class MessagesMock(object):
             )),
             ("is_scheduled", False),
             ("scheduled_date", None),
-            ("date_created", self.fake.iso8601(tzinfo=None)),
+            ("date_created", faker.iso8601(tzinfo=None)),
             ("type", "invite"),
             ("id", self.id),
             ("subject", "We want your opinion"),
@@ -50,9 +48,6 @@ class MessagesMock(object):
 
 class MessagesRecipientsMock(object):
 
-    def __init__(self):
-        self.fake = faker
-
     @all_requests
     def recipient_add(self, url, request):
         headers = create_quota_headers()
@@ -60,7 +55,7 @@ class MessagesRecipientsMock(object):
         content = {
             "succeeded": [{
                 "id": str(random.randint(1234, 567890)),
-                "email": self.fake.safe_email(),
+                "email": faker.safe_email(),
                 "href": "https://api.surveymonkey.net/v3/collectors/1234/recipients/1234"
             }],
             "invalids": [],
@@ -75,16 +70,13 @@ class MessagesRecipientsMock(object):
 
 class MessagesSendMock(object):
 
-    def __init__(self):
-        self.fake = faker
-
     @all_requests
     def send(self, url, request):
         headers = create_quota_headers()
 
         content = {
           "is_scheduled": True,
-          "scheduled_date": self.fake.iso8601(tzinfo=None),
+          "scheduled_date": faker.iso8601(tzinfo=None),
           "body": "<html>...</html>",
           "subject": "We want your opinion",
           "recipients": [

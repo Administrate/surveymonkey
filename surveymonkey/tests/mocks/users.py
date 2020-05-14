@@ -5,8 +5,7 @@ import random
 from httmock import urlmatch, response
 from surveymonkey.tests.mocks.utils import create_quota_headers
 
-from surveymonkey.tests.conftest import faker as faker_fixture
-faker = faker_fixture()
+from surveymonkey.tests.conftest import faker
 
 
 class UsersResponseMocks(object):

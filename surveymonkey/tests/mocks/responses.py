@@ -5,14 +5,10 @@ import random
 from httmock import all_requests, response
 from surveymonkey.tests.mocks.utils import create_quota_headers
 
-from surveymonkey.tests.conftest import faker as faker_fixture
-faker = faker_fixture()
-
 
 class ResponseGetMock(object):
 
     def __init__(self, survey_id=random.randint(1234, 567890), response_id=random.randint(1234, 567890)):  # noqa:E501
-        self.fake = faker
         self.survey_id = survey_id
         self.response_id = response_id
 

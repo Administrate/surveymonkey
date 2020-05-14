@@ -8,8 +8,7 @@ from surveymonkey.tests.mocks.utils import create_quota_headers, BaseListMock
 
 from surveymonkey.constants import URL_FOLDERS_LIST
 
-from surveymonkey.tests.conftest import faker as faker_fixture
-faker = faker_fixture()
+from surveymonkey.tests.conftest import faker
 
 
 class FolderListMock(BaseListMock):
@@ -19,13 +18,12 @@ class FolderListMock(BaseListMock):
 
     def create_folders(self, per_page, current_page, pages):
         folders = []
-        fake = faker
         remaining = self.calculate_number_remaining(per_page, current_page)
 
         if remaining > 0:
             remaining = remaining if remaining < per_page else per_page
             for x in range(0, remaining):
-                id = fake.password(
+                id = faker.password(
                     length=7,
                     digits=True,
                     upper_case=False,
@@ -35,7 +33,7 @@ class FolderListMock(BaseListMock):
                 data = {
                     "href": "{base_url}/{id}".format(base_url=self.base_url, id=id),
                     "id": id,
-                    "title": fake.catch_phrase(),
+                    "title": faker.catch_phrase(),
                     "num_surveys": randint(1, 9)
                 }
                 folders.append(data)
