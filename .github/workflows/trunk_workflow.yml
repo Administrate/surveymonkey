@@ -1,0 +1,14 @@
+name: Trunk Branch
+
+on:
+  push:
+    branches:
+      - trunk
+
+concurrency: deployment
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    name: CI
+    secrets: inherit

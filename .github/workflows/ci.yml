@@ -1,0 +1,8 @@
+name: CI Workflow
+
+on: workflow_call
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+    name: Tests
