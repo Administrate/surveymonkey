@@ -1,0 +1,16 @@
+name: Feature Branch
+
+on:
+  push:
+    branches-ignore:
+      - trunk
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    name: CI
+    secrets: inherit
