@@ -6,7 +6,7 @@ import random
 
 from expects import expect, have_keys, have_length, be_a
 from httmock import HTTMock
-from mock import patch
+from unittest.mock import patch
 
 from surveymonkey.constants import URL_COLLECTOR_CREATE
 from surveymonkey.collectors import Collector, EmailConfig, WeblinkConfig

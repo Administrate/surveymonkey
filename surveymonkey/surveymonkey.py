@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import six
 from furl import furl
 
 from surveymonkey.constants import API_VERSION
@@ -23,7 +22,7 @@ class SurveyMonkeyConnection(object):
 
 class BaseConfig(object):
     def __init__(self, **kwargs):
-        for key, value in six.iteritems(kwargs):
+        for key, value in kwargs.items():
             setattr(self, key, value)
 
     def vars(self):

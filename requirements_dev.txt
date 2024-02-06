@@ -1,8 +1,7 @@
-pip==8.1.2
+pip==21.2.4
 bumpversion==0.5.3
-wheel==0.29.0
-watchdog==0.8.3
-flake8==2.6.0
+wheel==0.37.1
+flake8==5.0.4
 tox==3.28.0
 tox-pyenv==1.0.3
 expects==0.8.0
@@ -12,9 +11,7 @@ Sphinx==1.4.4
 pytest==3.10.1
 requests==2.11.1
 httmock==1.2.5
-mock==2.0.0
 freezegun==0.3.8
 Faker==0.7.3
 furl==0.5.6
 validators==0.12.6
-six==1.14.0

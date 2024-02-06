@@ -10,7 +10,7 @@ from faker import Faker
 from freezegun import freeze_time
 from expects import expect, have_key, have_length, be_above_or_equal
 from httmock import HTTMock
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 from surveymonkey.messages import Message, InviteConfig, ReminderConfig
 from surveymonkey.tests.messages.matchers.messages import be_sent, be_invite, be_reminder

@@ -2,12 +2,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 
-import six
 import pytest
 
 from httmock import HTTMock
 from expects import expect, have_key, have_keys, equal, be_a, contain
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 from surveymonkey.manager import BaseManager
 from surveymonkey.constants import URL_USER_ME, API_URL
@@ -38,7 +37,7 @@ class TestBaseManager(object):
             data = self.manager.parse_response(response)
 
             expect(data).to(have_keys('id', 'username', 'email'))
-            expect(data["id"]).to(be_a(six.text_type))  # IDs from SurveyMonkey are strings
+            expect(data["id"]).to(be_a(str))  # IDs from SurveyMonkey are strings
 
     def test_parse_response_raises_exception_on_malformed_response(self):
         with pytest.raises(SurveyMonkeyBadResponse) as e:
