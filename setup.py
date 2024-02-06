@@ -7,12 +7,12 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    'furl==0.5.6',
+    'furl==2.1.3',
 ]
 
 test_requirements = [
-    'pytest==3.10.1',
-    'validators==0.12.6'
+    'pytest==6.2.5',
+    'validators==0.20.0'
 ]
 
 setup(
