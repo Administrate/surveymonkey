@@ -7,19 +7,17 @@ with open('README.rst') as readme_file:
     readme = readme_file.read()
 
 requirements = [
-    'furl==0.5.6',
-    'six==1.14.0',
-    'pytest==3.10.1',
-    'validators==0.12.6'
+    'furl==2.1.3',
 ]
 
 test_requirements = [
-    # TODO: put package test requirements here
+    'pytest==6.2.5',
+    'validators==0.20.0'
 ]
 
 setup(
     name='surveymonkey',
-    version='0.14.0',
+    version='1.0.0',
     description="Python wrapper for the Survey Monkey v3 API",
     long_description=readme,
     author="Aaron Bassett",
@@ -44,10 +42,11 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
     ],
     test_suite='tests',
     tests_require=test_requirements
